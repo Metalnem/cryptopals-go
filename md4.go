@@ -1,65 +1,111 @@
+// Copyright 2009 The Go Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
+// Package md4 implements the MD4 hash algorithm as defined in RFC 1320.
 package main
 
-import (
-	"hash"
-)
+import "hash"
 
-const (
-	_A = 0x67452301
-	_B = 0xefcdab89
-	_C = 0x98badcfe
-	_D = 0x10325476
-)
-
-// Size represents the size of MD4 checksum in bytes.
+// Size represents the size of an MD4 checksum in bytes.
 const Size = 16
 
-// BlockSize represents the block size of MD4 function in bytes.
+// BlockSize represents the blocksize of MD4 in bytes.
 const BlockSize = 64
 
+const (
+	_Chunk = 64
+	_Init0 = 0x67452301
+	_Init1 = 0xEFCDAB89
+	_Init2 = 0x98BADCFE
+	_Init3 = 0x10325476
+)
+
+// digest represents the partial evaluation of a checksum.
 type digest struct {
-	buffer [4]uint32
+	s   [4]uint32
+	x   [_Chunk]byte
+	nx  int
+	len uint64
+}
+
+func (d *digest) Reset() {
+	d.s[0] = _Init0
+	d.s[1] = _Init1
+	d.s[2] = _Init2
+	d.s[3] = _Init3
+	d.nx = 0
+	d.len = 0
 }
 
 // New returns a new hash.Hash computing the MD4 checksum.
 func New() hash.Hash {
 	d := new(digest)
 	d.Reset()
-
 	return d
 }
 
-func (d *digest) Write(p []byte) (int, error) {
-	return 0, nil
+func (d *digest) Size() int { return Size }
+
+func (d *digest) BlockSize() int { return BlockSize }
+
+func (d *digest) Write(p []byte) (nn int, err error) {
+	nn = len(p)
+	d.len += uint64(nn)
+	if d.nx > 0 {
+		n := len(p)
+		if n > _Chunk-d.nx {
+			n = _Chunk - d.nx
+		}
+		for i := 0; i < n; i++ {
+			d.x[d.nx+i] = p[i]
+		}
+		d.nx += n
+		if d.nx == _Chunk {
+			_Block(d, d.x[0:])
+			d.nx = 0
+		}
+		p = p[n:]
+	}
+	n := _Block(d, p)
+	p = p[n:]
+	if len(p) > 0 {
+		d.nx = copy(d.x[:], p)
+	}
+	return
 }
 
-func (d *digest) Sum(b []byte) []byte {
-	return nil
-}
+func (d *digest) Sum(in []byte) []byte {
+	// Make a copy of d, so that caller can keep writing and summing.
+	d0 := new(digest)
+	*d0 = *d
 
-func (d *digest) Reset() {
-	d.buffer[0] = _A
-	d.buffer[1] = _B
-	d.buffer[2] = _C
-	d.buffer[3] = _D
-}
+	// Padding.  Add a 1 bit and 0 bits until 56 bytes mod 64.
+	len := d0.len
+	var tmp [64]byte
+	tmp[0] = 0x80
+	if len%64 < 56 {
+		d0.Write(tmp[0 : 56-len%64])
+	} else {
+		d0.Write(tmp[0 : 64+56-len%64])
+	}
 
-func (d *digest) Size() int {
-	return Size
-}
+	// Length in bits.
+	len <<= 3
+	for i := uint(0); i < 8; i++ {
+		tmp[i] = byte(len >> (8 * i))
+	}
+	d0.Write(tmp[0:8])
 
-func (d *digest) BlockSize() int {
-	return BlockSize
-}
+	if d0.nx != 0 {
+		panic("d.nx != 0")
+	}
 
-func f(x, y, z uint32) uint32 {
-	return (x & y) | (^x & z)
-}
-
-func g(x, y, z uint32) uint32 {
-	return (x & y) | (x & z) | (y & z)
-}
-
-func h(x, y, z uint32) uint32 {
-	return x ^ y ^ z
+	for _, s := range d0.s {
+		in = append(in, byte(s>>0))
+		in = append(in, byte(s>>8))
+		in = append(in, byte(s>>16))
+		in = append(in, byte(s>>24))
+	}
+	return in
 }
