@@ -4,6 +4,6 @@ Go solutions to the Matasano Crypto Challenges (<http://cryptopals.com/>). Solut
 
 ## [Set 4: Stream crypto and randomness](http://cryptopals.com/sets/4/)
 
-30. Break an MD4 keyed MAC using length extension ([problem](http://cryptopals.com/sets/4/challenges/30))
+30. Break an MD4 keyed MAC using length extension ([problem](http://cryptopals.com/sets/4/challenges/30), [solution](https://github.com/Metalnem/cryptopals-go/blob/master/challenge30.go))
 31. Implement and break HMAC-SHA1 with an artificial timing leak ([problem](http://cryptopals.com/sets/4/challenges/31))
 32. Break HMAC-SHA1 with a slightly less artificial timing leak ([problem](http://cryptopals.com/sets/4/challenges/32))
