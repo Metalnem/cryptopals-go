@@ -6,7 +6,7 @@
 // In its own file so that a faster assembly or C version
 // can be substituted easily.
 
-package main
+package cryptopals
 
 var shift1 = []uint{3, 7, 11, 19}
 var shift2 = []uint{3, 5, 9, 13}
