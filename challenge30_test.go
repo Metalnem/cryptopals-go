@@ -1,4 +1,4 @@
-package cryptopals
+package main
 
 import (
 	"encoding/binary"

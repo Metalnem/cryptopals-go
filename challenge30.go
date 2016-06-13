@@ -1,7 +1,7 @@
 // Challenge 30 - Break an MD4 keyed MAC using length extension
-// http://cryptopals.com/sets/4/challenges/29
+// http://cryptopals.com/sets/4/challenges/30
 
-package cryptopals
+package main
 
 import (
 	"crypto/subtle"
