@@ -17,7 +17,8 @@ type challenge31 struct {
 }
 
 type hmacSHA1Server struct {
-	key []byte
+	key   []byte
+	delay time.Duration
 }
 
 func (s *hmacSHA1Server) start() {
@@ -48,7 +49,7 @@ func (s *hmacSHA1Server) insecureCompare(file, sig []byte) int {
 			return 0
 		}
 
-		time.Sleep(10 * time.Millisecond)
+		time.Sleep(s.delay)
 	}
 
 	return 1
@@ -64,10 +65,11 @@ func (challenge31) BreakHmacSHA1(server, file string) []byte {
 		for j := 0; j < 256; j++ {
 			sig[i] = byte(j)
 			start := time.Now()
-
 			url := fmt.Sprintf("%s/test?file=%s&signature=%s", server, file, hex.EncodeToString(sig))
-			resp, _ := http.Get(url)
-			resp.Body.Close()
+
+			if resp, err := http.Get(url); err == nil {
+				resp.Body.Close()
+			}
 
 			elapsed := time.Since(start)
 

@@ -10,7 +10,8 @@ import (
 
 func TestBreakHmacSHA1(t *testing.T) {
 	key := []byte("We all live in a yellow submarine")
-	s := &hmacSHA1Server{key: key}
+	delay := 50 * time.Millisecond
+	s := &hmacSHA1Server{key: key, delay: delay}
 
 	go func() {
 		s.start()
