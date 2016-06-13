@@ -7,7 +7,8 @@ import (
 	"crypto/hmac"
 	"crypto/sha1"
 	"encoding/hex"
-	"hash"
+	"fmt"
+	"log"
 	"net/http"
 	"time"
 )
@@ -17,13 +18,9 @@ type challenge31 struct {
 
 type hmacSHA1Server struct {
 	key []byte
-	h   hash.Hash
 }
 
-func spawn(key []byte) {
-	h := hmac.New(sha1.New, key)
-	s := &hmacSHA1Server{key: key, h: h}
-
+func (s *hmacSHA1Server) start() {
 	http.Handle("/test", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		q := r.URL.Query()
 		file := []byte(q.Get("file"))
@@ -34,11 +31,13 @@ func spawn(key []byte) {
 		}
 	}))
 
-	http.ListenAndServe(":9000", nil)
+	log.Fatal(http.ListenAndServe(":9000", nil))
 }
 
 func (s *hmacSHA1Server) insecureCompare(file, sig []byte) int {
-	mac := s.h.Sum(nil)
+	h := hmac.New(sha1.New, s.key)
+	h.Write(file)
+	mac := h.Sum(nil)
 
 	if len(sig) != len(mac) {
 		return 0
@@ -49,12 +48,37 @@ func (s *hmacSHA1Server) insecureCompare(file, sig []byte) int {
 			return 0
 		}
 
-		time.Sleep(50 * time.Millisecond)
+		time.Sleep(10 * time.Millisecond)
 	}
 
 	return 1
 }
 
 func (challenge31) BreakHmacSHA1(server, file string) []byte {
-	return nil
+	sig := make([]byte, sha1.Size)
+
+	for i := 0; i < len(sig); i++ {
+		var valBest byte
+		var timeBest time.Duration
+
+		for j := 0; j < 256; j++ {
+			sig[i] = byte(j)
+			start := time.Now()
+
+			url := fmt.Sprintf("%s/test?file=%s&signature=%s", server, file, hex.EncodeToString(sig))
+			resp, _ := http.Get(url)
+			resp.Body.Close()
+
+			elapsed := time.Since(start)
+
+			if elapsed > timeBest {
+				valBest = byte(j)
+				timeBest = elapsed
+			}
+		}
+
+		sig[i] = valBest
+	}
+
+	return sig
 }
