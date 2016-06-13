@@ -1,7 +1,7 @@
 // Challenge 31 - Implement and break HMAC-SHA1 with an artificial timing leak
 // http://cryptopals.com/sets/4/challenges/31
 
-package main
+package cryptopals
 
 import (
 	"crypto/hmac"
@@ -53,4 +53,8 @@ func (s *hmacSHA1Server) insecureCompare(file, sig []byte) int {
 	}
 
 	return 1
+}
+
+func (challenge31) BreakHmacSHA1(server, file string) []byte {
+	return nil
 }
