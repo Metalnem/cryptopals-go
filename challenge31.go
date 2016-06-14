@@ -67,6 +67,17 @@ func (challenge31) buildURL(addr, file string, sig []byte) *url.URL {
 	return url
 }
 
+func (x challenge31) testSignature(addr, file string, sig []byte) bool {
+	url := x.buildURL(addr, file, sig)
+	resp, err := http.Get(url.String())
+
+	if err == nil {
+		defer resp.Body.Close()
+	}
+
+	return resp.StatusCode == http.StatusOK
+}
+
 func (x challenge31) BreakHmacSHA1(addr, file string) ([]byte, bool) {
 	sig := make([]byte, sha1.Size)
 
@@ -76,13 +87,8 @@ func (x challenge31) BreakHmacSHA1(addr, file string) ([]byte, bool) {
 
 		for j := 0; j < 256; j++ {
 			sig[i] = byte(j)
-			url := x.buildURL(addr, file, sig)
 			start := time.Now()
-
-			if resp, err := http.Get(url.String()); err == nil {
-				resp.Body.Close()
-			}
-
+			x.testSignature(addr, file, sig)
 			elapsed := time.Since(start)
 
 			if elapsed > timeBest {
@@ -94,5 +100,9 @@ func (x challenge31) BreakHmacSHA1(addr, file string) ([]byte, bool) {
 		sig[i] = valBest
 	}
 
-	return sig, true
+	if x.testSignature(addr, file, sig) {
+		return sig, true
+	}
+
+	return nil, false
 }

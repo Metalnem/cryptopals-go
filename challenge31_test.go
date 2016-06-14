@@ -9,6 +9,8 @@ import (
 )
 
 func TestBreakHmacSHA1(t *testing.T) {
+	t.Skip("Skip this test, because it runs for about 40 minutes")
+
 	key := []byte("We all live in a yellow submarine")
 	delay := 50 * time.Millisecond
 	s := &hmacSHA1Server{key: key, delay: delay}
