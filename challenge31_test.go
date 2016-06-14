@@ -19,14 +19,20 @@ func TestBreakHmacSHA1(t *testing.T) {
 
 	time.Sleep(time.Second)
 
-	file := "Beatles"
+	file := "Vanilla Ice"
 	h := hmac.New(sha1.New, key)
 	h.Write([]byte(file))
 
+	signature, success := challenge31{}.BreakHmacSHA1("http://localhost:9000/test", file)
+
+	if !success {
+		t.Fatalf("Failed to find the signature")
+	}
+
 	expected := hex.EncodeToString(h.Sum(nil))
-	actual := hex.EncodeToString(challenge31{}.BreakHmacSHA1("http://localhost:9000", file))
+	actual := hex.EncodeToString(signature)
 
 	if expected != actual {
-		t.Errorf("Expected %v, was %v", expected, actual)
+		t.Fatalf("Expected %v, was %v", expected, actual)
 	}
 }

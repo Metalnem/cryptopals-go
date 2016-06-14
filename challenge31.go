@@ -7,9 +7,9 @@ import (
 	"crypto/hmac"
 	"crypto/sha1"
 	"encoding/hex"
-	"fmt"
 	"log"
 	"net/http"
+	"net/url"
 	"time"
 )
 
@@ -55,7 +55,19 @@ func (s *hmacSHA1Server) insecureCompare(file, sig []byte) int {
 	return 1
 }
 
-func (challenge31) BreakHmacSHA1(server, file string) []byte {
+func (challenge31) buildURL(addr, file string, sig []byte) *url.URL {
+	params := url.Values{}
+
+	params.Add("file", file)
+	params.Add("signature", hex.EncodeToString(sig))
+
+	url, _ := url.Parse(addr)
+	url.RawQuery = params.Encode()
+
+	return url
+}
+
+func (x challenge31) BreakHmacSHA1(addr, file string) ([]byte, bool) {
 	sig := make([]byte, sha1.Size)
 
 	for i := 0; i < len(sig); i++ {
@@ -64,10 +76,10 @@ func (challenge31) BreakHmacSHA1(server, file string) []byte {
 
 		for j := 0; j < 256; j++ {
 			sig[i] = byte(j)
+			url := x.buildURL(addr, file, sig)
 			start := time.Now()
-			url := fmt.Sprintf("%s/test?file=%s&signature=%s", server, file, hex.EncodeToString(sig))
 
-			if resp, err := http.Get(url); err == nil {
+			if resp, err := http.Get(url.String()); err == nil {
 				resp.Body.Close()
 			}
 
@@ -82,5 +94,5 @@ func (challenge31) BreakHmacSHA1(server, file string) []byte {
 		sig[i] = valBest
 	}
 
-	return sig
+	return sig, true
 }
