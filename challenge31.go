@@ -55,7 +55,7 @@ func (s *hmacSHA1Server) insecureCompare(file, sig []byte) int {
 	return 1
 }
 
-func (challenge31) buildURL(addr, file string, sig []byte) *url.URL {
+func (challenge31) buildURL(addr, file string, sig []byte) string {
 	params := url.Values{}
 
 	params.Add("file", file)
@@ -64,21 +64,10 @@ func (challenge31) buildURL(addr, file string, sig []byte) *url.URL {
 	url, _ := url.Parse(addr)
 	url.RawQuery = params.Encode()
 
-	return url
+	return url.String()
 }
 
-func (x challenge31) testSignature(addr, file string, sig []byte) bool {
-	url := x.buildURL(addr, file, sig)
-	resp, err := http.Get(url.String())
-
-	if err == nil {
-		defer resp.Body.Close()
-	}
-
-	return resp.StatusCode == http.StatusOK
-}
-
-func (x challenge31) BreakHmacSHA1(addr, file string) ([]byte, bool) {
+func (x challenge31) ForgeHmacSHA1Signature(addr, file string) []byte {
 	sig := make([]byte, sha1.Size)
 
 	for i := 0; i < len(sig); i++ {
@@ -87,8 +76,11 @@ func (x challenge31) BreakHmacSHA1(addr, file string) ([]byte, bool) {
 
 		for j := 0; j < 256; j++ {
 			sig[i] = byte(j)
+			url := x.buildURL(addr, file, sig)
+
 			start := time.Now()
-			x.testSignature(addr, file, sig)
+			resp, _ := http.Get(url)
+			resp.Body.Close()
 			elapsed := time.Since(start)
 
 			if elapsed > timeBest {
@@ -100,9 +92,5 @@ func (x challenge31) BreakHmacSHA1(addr, file string) ([]byte, bool) {
 		sig[i] = valBest
 	}
 
-	if x.testSignature(addr, file, sig) {
-		return sig, true
-	}
-
-	return nil, false
+	return sig
 }
