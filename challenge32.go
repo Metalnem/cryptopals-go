@@ -1,5 +1,5 @@
-// Challenge 31 - Implement and break HMAC-SHA1 with an artificial timing leak
-// http://cryptopals.com/sets/4/challenges/31
+// Challenge 32 - Break HMAC-SHA1 with a slightly less artificial timing leak
+// http://cryptopals.com/sets/4/challenges/32
 
 package cryptopals
 
