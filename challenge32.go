@@ -23,18 +23,22 @@ func (challenge32) ForgeHmacSHA1SignaturePrecise(addr, file string) []byte {
 		for j := 0; j < 256; j++ {
 			sig[i] = byte(j)
 			url := x.buildURL(addr, file, sig)
-			start := time.Now()
+			fastest := time.Hour
 
-			for k := 0; k < 15; k++ {
+			for k := 0; k < 10; k++ {
+				start := time.Now()
 				resp, _ := http.Get(url)
+				elapsed := time.Since(start)
 				resp.Body.Close()
+
+				if elapsed < fastest {
+					fastest = elapsed
+				}
 			}
 
-			elapsed := time.Since(start)
-
-			if elapsed > timeBest {
+			if fastest > timeBest {
 				valBest = byte(j)
-				timeBest = elapsed
+				timeBest = fastest
 			}
 		}
 
