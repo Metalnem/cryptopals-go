@@ -7,3 +7,7 @@ Go solutions to the Matasano Crypto Challenges (<http://cryptopals.com/>). Solut
 30. Break an MD4 keyed MAC using length extension ([problem](http://cryptopals.com/sets/4/challenges/30), [solution](https://github.com/Metalnem/cryptopals-go/blob/master/challenge30.go))
 31. Implement and break HMAC-SHA1 with an artificial timing leak ([problem](http://cryptopals.com/sets/4/challenges/31), [solution](https://github.com/Metalnem/cryptopals-go/blob/master/challenge31.go))
 32. Break HMAC-SHA1 with a slightly less artificial timing leak ([problem](http://cryptopals.com/sets/4/challenges/32), [solution](https://github.com/Metalnem/cryptopals-go/blob/master/challenge32.go))
+
+## [Set 5: Diffie-Hellman and friends](http://cryptopals.com/sets/5/)
+
+33. Implement Diffie-Hellman ([problem](http://cryptopals.com/sets/5/challenges/33), [solution](https://github.com/Metalnem/cryptopals-go/blob/master/challenge33.go))
