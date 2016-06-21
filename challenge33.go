@@ -32,13 +32,6 @@ func init() {
 	g.SetInt64(2)
 }
 
-func (challenge33) NewNetwork() *network {
-	return &network{
-		in:  make(chan *big.Int, 1),
-		out: make(chan *big.Int, 1),
-	}
-}
-
 func (net *network) Read() *big.Int {
 	return <-net.in
 }
