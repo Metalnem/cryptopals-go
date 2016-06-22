@@ -5,6 +5,7 @@ package cryptopals
 
 import (
 	"crypto/rand"
+	"crypto/sha256"
 	"math/big"
 )
 
@@ -40,7 +41,7 @@ func (net *network) Write(n *big.Int) {
 	net.out <- n
 }
 
-func (challenge33) DiffieHellman(net *network) *big.Int {
+func (challenge33) DiffieHellman(net *network) []byte {
 	a, _ := rand.Int(rand.Reader, p)
 
 	A := new(big.Int)
@@ -52,5 +53,8 @@ func (challenge33) DiffieHellman(net *network) *big.Int {
 	s := new(big.Int)
 	s.Exp(B, a, p)
 
-	return s
+	h := sha256.New()
+	h.Write(s.Bytes())
+
+	return h.Sum(nil)
 }
