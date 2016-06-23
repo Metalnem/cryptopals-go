@@ -31,17 +31,12 @@ func (challenge34) generateKey(s *big.Int) []byte {
 	return h.Sum(nil)[0:aes.BlockSize]
 }
 
-func (challenge34) generateIv() []byte {
-	iv := make([]byte, aes.BlockSize)
-	rand.Read(iv)
-
-	return iv
-}
-
 func (x challenge34) encrypt(message, key []byte) []byte {
-	iv := x.generateIv()
 	padded, _ := pkcs7.Pad(message, aes.BlockSize)
-	ciphertext := make([]byte, len(iv)+len(message))
+	ciphertext := make([]byte, aes.BlockSize+len(padded))
+
+	iv := ciphertext[0:aes.BlockSize]
+	rand.Read(iv)
 
 	block, _ := aes.NewCipher(key)
 	mode := cipher.NewCBCEncrypter(block, iv)
@@ -57,8 +52,9 @@ func (x challenge34) decrypt(ciphertext, key []byte) []byte {
 	block, _ := aes.NewCipher(key)
 	mode := cipher.NewCBCDecrypter(block, iv)
 	mode.CryptBlocks(message, ciphertext[aes.BlockSize:])
+	unpadded, _ := pkcs7.Unpad(message)
 
-	return message
+	return unpadded
 }
 
 func (x challenge34) Client(message []byte, net Network) {
@@ -124,7 +120,8 @@ func (x challenge34) Attacker(client, server Network) ([]byte, []byte) {
 	serverCiphertext := x.readBytes(server)
 	client.Write(serverCiphertext)
 
-	key := make([]byte, aes.BlockSize)
+	s := new(big.Int)
+	key := x.generateKey(s)
 
 	clientMessage := x.decrypt(clientCiphertext, key)
 	serverMessage := x.decrypt(serverCiphertext, key)
