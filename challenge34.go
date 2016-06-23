@@ -105,3 +105,29 @@ func (x challenge34) Server(net Network) {
 
 	net.Write(ciphertext)
 }
+
+func (x challenge34) Attacker(client, server Network) ([]byte, []byte) {
+	p := x.readInt(client)
+	g := x.readInt(client)
+	client.Read()
+
+	server.Write(p)
+	server.Write(g)
+	server.Write(p)
+
+	server.Read()
+	client.Write(p)
+
+	clientCiphertext := x.readBytes(client)
+	server.Write(clientCiphertext)
+
+	serverCiphertext := x.readBytes(server)
+	client.Write(serverCiphertext)
+
+	key := make([]byte, aes.BlockSize)
+
+	clientMessage := x.decrypt(clientCiphertext, key)
+	serverMessage := x.decrypt(serverCiphertext, key)
+
+	return clientMessage, serverMessage
+}
