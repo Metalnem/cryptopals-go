@@ -11,3 +11,4 @@ Go solutions to the Matasano Crypto Challenges (<http://cryptopals.com/>). Solut
 ## [Set 5: Diffie-Hellman and friends](http://cryptopals.com/sets/5/)
 
 33. Implement Diffie-Hellman ([problem](http://cryptopals.com/sets/5/challenges/33), [solution](https://github.com/Metalnem/cryptopals-go/blob/master/challenge33.go))
+34. Implement a MITM key-fixing attack on Diffie-Hellman with parameter injection ([problem](http://cryptopals.com/sets/5/challenges/34), [solution](https://github.com/Metalnem/cryptopals-go/blob/master/challenge34.go))
