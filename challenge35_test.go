@@ -35,7 +35,7 @@ func TestAttackerNegotiatedGroups(t *testing.T) {
 	go func() {
 		netClient := &network{in: outClient, out: inClient}
 		netServer := &network{in: outServer, out: inServer}
-		clientMessage = c.Attacker(netClient, netServer)
+		clientMessage = c.AttackerNegotiatedGroups(netClient, netServer)
 		wg.Done()
 	}()
 

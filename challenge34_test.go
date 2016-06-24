@@ -35,7 +35,7 @@ func TestAttackerKeyFixing(t *testing.T) {
 	go func() {
 		netClient := &network{in: outClient, out: inClient}
 		netServer := &network{in: outServer, out: inServer}
-		clientMessage, serverMessage = c.Attacker(netClient, netServer)
+		clientMessage, serverMessage = c.AttackerKeyFixing(netClient, netServer)
 		wg.Done()
 	}()
 
