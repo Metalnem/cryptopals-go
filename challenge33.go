@@ -12,28 +12,9 @@ import (
 type challenge33 struct {
 }
 
-// Network simulates reliable bidirectional network stream.
-type Network interface {
-	Read() interface{}
-	Write(interface{})
-}
-
 type dhParams struct {
 	p *big.Int
 	g *big.Int
-}
-
-type network struct {
-	in  <-chan interface{}
-	out chan<- interface{}
-}
-
-func (net *network) Read() interface{} {
-	return <-net.in
-}
-
-func (net *network) Write(x interface{}) {
-	net.out <- x
 }
 
 func (challenge33) defaultDhParams() dhParams {

@@ -13,14 +13,6 @@ import (
 type challenge34 struct {
 }
 
-func (challenge34) readInt(net Network) *big.Int {
-	return net.Read().(*big.Int)
-}
-
-func (challenge34) readBytes(net Network) []byte {
-	return net.Read().([]byte)
-}
-
 func (challenge34) generateKey(s *big.Int) []byte {
 	h := sha1.New()
 	h.Write(s.Bytes())
@@ -40,7 +32,7 @@ func (x challenge34) Client(message []byte, net Network) {
 	net.Write(g)
 	net.Write(A)
 
-	B := x.readInt(net)
+	B := readInt(net)
 
 	s := new(big.Int)
 	s.Exp(B, a, p)
@@ -53,9 +45,9 @@ func (x challenge34) Client(message []byte, net Network) {
 }
 
 func (x challenge34) Server(net Network) {
-	p := x.readInt(net)
-	g := x.readInt(net)
-	A := x.readInt(net)
+	p := readInt(net)
+	g := readInt(net)
+	A := readInt(net)
 
 	b, _ := rand.Int(rand.Reader, p)
 	B := new(big.Int)
@@ -67,15 +59,15 @@ func (x challenge34) Server(net Network) {
 	s.Exp(A, b, p)
 
 	key := x.generateKey(s)
-	message := AesCbcDecrypt(x.readBytes(net), key)
+	message := AesCbcDecrypt(readBytes(net), key)
 	ciphertext := AesCbcEncrypt(message, key)
 
 	net.Write(ciphertext)
 }
 
 func (x challenge34) Attacker(client, server Network) ([]byte, []byte) {
-	p := x.readInt(client)
-	g := x.readInt(client)
+	p := readInt(client)
+	g := readInt(client)
 	client.Read()
 
 	server.Write(p)
@@ -85,10 +77,10 @@ func (x challenge34) Attacker(client, server Network) ([]byte, []byte) {
 	server.Read()
 	client.Write(p)
 
-	clientCiphertext := x.readBytes(client)
+	clientCiphertext := readBytes(client)
 	server.Write(clientCiphertext)
 
-	serverCiphertext := x.readBytes(server)
+	serverCiphertext := readBytes(server)
 	client.Write(serverCiphertext)
 
 	s := new(big.Int)
