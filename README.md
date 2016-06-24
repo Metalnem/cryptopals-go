@@ -12,3 +12,4 @@ Go solutions to the Matasano Crypto Challenges (<http://cryptopals.com/>). Solut
 
 33. Implement Diffie-Hellman ([problem](http://cryptopals.com/sets/5/challenges/33), [solution](https://github.com/Metalnem/cryptopals-go/blob/master/challenge33.go))
 34. Implement a MITM key-fixing attack on Diffie-Hellman with parameter injection ([problem](http://cryptopals.com/sets/5/challenges/34), [solution](https://github.com/Metalnem/cryptopals-go/blob/master/challenge34.go))
+35. Implement DH with negotiated groups, and break with malicious "g" parameters ([problem](http://cryptopals.com/sets/5/challenges/35), [solution](https://github.com/Metalnem/cryptopals-go/blob/master/challenge35.go))

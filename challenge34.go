@@ -5,12 +5,9 @@ package cryptopals
 
 import (
 	"crypto/aes"
-	"crypto/cipher"
 	"crypto/rand"
 	"crypto/sha1"
 	"math/big"
-
-	"github.com/d1str0/pkcs7"
 )
 
 type challenge34 struct {
@@ -31,32 +28,6 @@ func (challenge34) generateKey(s *big.Int) []byte {
 	return h.Sum(nil)[0:aes.BlockSize]
 }
 
-func (x challenge34) encrypt(message, key []byte) []byte {
-	padded, _ := pkcs7.Pad(message, aes.BlockSize)
-	ciphertext := make([]byte, aes.BlockSize+len(padded))
-
-	iv := ciphertext[0:aes.BlockSize]
-	rand.Read(iv)
-
-	block, _ := aes.NewCipher(key)
-	mode := cipher.NewCBCEncrypter(block, iv)
-	mode.CryptBlocks(ciphertext[aes.BlockSize:], padded)
-
-	return ciphertext
-}
-
-func (x challenge34) decrypt(ciphertext, key []byte) []byte {
-	iv := ciphertext[0:aes.BlockSize]
-	message := make([]byte, len(ciphertext)-len(iv))
-
-	block, _ := aes.NewCipher(key)
-	mode := cipher.NewCBCDecrypter(block, iv)
-	mode.CryptBlocks(message, ciphertext[aes.BlockSize:])
-	unpadded, _ := pkcs7.Unpad(message)
-
-	return unpadded
-}
-
 func (x challenge34) Client(message []byte, net Network) {
 	params := challenge33{}.defaultDhParams()
 	p, g := params.p, params.g
@@ -75,7 +46,7 @@ func (x challenge34) Client(message []byte, net Network) {
 	s.Exp(B, a, p)
 
 	key := x.generateKey(s)
-	ciphertext := x.encrypt(message, key)
+	ciphertext := AesCbcEncrypt(message, key)
 
 	net.Write(ciphertext)
 	net.Read()
@@ -96,8 +67,8 @@ func (x challenge34) Server(net Network) {
 	s.Exp(A, b, p)
 
 	key := x.generateKey(s)
-	message := x.decrypt(x.readBytes(net), key)
-	ciphertext := x.encrypt(message, key)
+	message := AesCbcDecrypt(x.readBytes(net), key)
+	ciphertext := AesCbcEncrypt(message, key)
 
 	net.Write(ciphertext)
 }
@@ -123,8 +94,8 @@ func (x challenge34) Attacker(client, server Network) ([]byte, []byte) {
 	s := new(big.Int)
 	key := x.generateKey(s)
 
-	clientMessage := x.decrypt(clientCiphertext, key)
-	serverMessage := x.decrypt(serverCiphertext, key)
+	clientMessage := AesCbcDecrypt(clientCiphertext, key)
+	serverMessage := AesCbcDecrypt(serverCiphertext, key)
 
 	return clientMessage, serverMessage
 }
