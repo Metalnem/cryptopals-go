@@ -53,7 +53,7 @@ func (x challenge35) Server(net Network) {
 	net.Write(ciphertext)
 }
 
-func (x challenge35) Attacker(client, server Network) []byte {
+func (x challenge35) AttackerNegotiatedGroups(client, server Network) []byte {
 	// All cases are very similar:
 	// g = 1 will result in B = 1
 	// g = p will result in B = 0

@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestAttackerXXX(t *testing.T) {
+func TestAttackerNegotiatedGroups(t *testing.T) {
 	c := challenge35{}
 
 	inClient := make(chan interface{}, 2)

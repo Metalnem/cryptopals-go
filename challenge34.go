@@ -65,7 +65,7 @@ func (x challenge34) Server(net Network) {
 	net.Write(ciphertext)
 }
 
-func (x challenge34) Attacker(client, server Network) ([]byte, []byte) {
+func (x challenge34) AttackerKeyFixing(client, server Network) ([]byte, []byte) {
 	p := readInt(client)
 	g := readInt(client)
 	client.Read()

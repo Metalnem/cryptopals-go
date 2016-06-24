@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestAttacker(t *testing.T) {
+func TestAttackerKeyFixing(t *testing.T) {
 	c := challenge34{}
 
 	inClient := make(chan interface{}, 3)
