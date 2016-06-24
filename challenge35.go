@@ -52,3 +52,32 @@ func (x challenge35) Server(net Network) {
 
 	net.Write(ciphertext)
 }
+
+func (x challenge35) Attacker(client, server Network) []byte {
+	// All cases are very similar:
+	// g = 1 will result in B = 1
+	// g = p will result in B = 0
+	// g = p - 1 will result in B = 1
+	// We are implementing third case here.
+
+	p := readInt(client)
+	readInt(client)
+
+	server.Write(p)
+	server.Write(big.NewInt(1))
+
+	client.Write(server.Read()) // Forward ACK
+	server.Write(client.Read()) // Forward A
+	client.Write(server.Read()) // Forward B
+
+	clientCiphertext := readBytes(client)
+	server.Write(clientCiphertext)
+
+	serverCiphertext := readBytes(server)
+	client.Write(serverCiphertext)
+
+	s := big.NewInt(1)
+	key := challenge34{}.generateKey(s)
+
+	return AesCbcDecrypt(clientCiphertext, key)
+}
