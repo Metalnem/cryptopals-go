@@ -3,7 +3,12 @@
 
 package cryptopals
 
-import "math/big"
+import (
+	"crypto/hmac"
+	"crypto/rand"
+	"crypto/sha256"
+	"math/big"
+)
 
 type challenge36 struct {
 }
@@ -12,6 +17,28 @@ type srpParams struct {
 	N *big.Int
 	g *big.Int
 	k *big.Int
+}
+
+type srpClientInfo struct {
+	I string
+	P string
+}
+
+func (challenge36) randBytes(size int) []byte {
+	b := make([]byte, size)
+
+	if _, err := rand.Read(b); err != nil {
+		panic("Random number generator failed")
+	}
+
+	return b
+}
+
+func (challenge36) sha256Digest(b []byte) []byte {
+	h := sha256.New()
+	h.Write(b)
+
+	return h.Sum(nil)
 }
 
 func (challenge36) defaultSrpParams() srpParams {
@@ -28,10 +55,71 @@ func (challenge36) defaultSrpParams() srpParams {
 	return srpParams{N: N, g: g, k: k}
 }
 
-func (challenge36) Client(params srpParams, net Network) {
+func (c challenge36) Client(params srpParams, info srpClientInfo, net Network) bool {
+	a := new(big.Int).SetBytes(c.randBytes(32))
+	A := new(big.Int).Exp(params.g, a, params.N)
 
+	net.Write(A)
+
+	s := readBytes(net)
+	B := readInt(net)
+
+	uH := c.sha256Digest(append(A.Bytes(), B.Bytes()...))
+	u := new(big.Int).SetBytes(uH)
+
+	xH := c.sha256Digest(append(s, []byte(info.P)...))
+	x := new(big.Int).SetBytes(xH)
+
+	E := new(big.Int).Mul(u, x)
+	E = E.Add(a, E)
+
+	S := new(big.Int).Exp(params.g, x, params.N)
+	S = S.Mul(S, params.k)
+	S = S.Sub(B, S)
+	S = S.Exp(S, E, params.N)
+
+	K := c.sha256Digest(S.Bytes())
+	h := hmac.New(sha256.New, K)
+	h.Write(s)
+
+	mac1 := h.Sum(nil)
+	net.Write(mac1)
+
+	return net.Read().(bool)
 }
 
-func (challenge36) Server(params srpParams, net Network) {
+func (c challenge36) Server(params srpParams, info srpClientInfo, net Network) bool {
+	s := c.randBytes(16)
+	xH := c.sha256Digest(append(s, []byte(info.P)...))
 
+	x := new(big.Int).SetBytes(xH)
+	v := new(big.Int).Exp(params.g, x, params.N)
+
+	b := new(big.Int).SetBytes(c.randBytes(32))
+	B := new(big.Int).Exp(params.g, b, params.N)
+	B = B.Add(B, new(big.Int).Mul(params.k, v))
+
+	net.Write(s)
+	net.Write(B)
+
+	A := readInt(net)
+
+	uH := c.sha256Digest(append(A.Bytes(), B.Bytes()...))
+	u := new(big.Int).SetBytes(uH)
+
+	S := new(big.Int).Exp(v, u, params.N)
+	S = S.Mul(A, S)
+	S = S.Exp(S, b, params.N)
+
+	K := c.sha256Digest(S.Bytes())
+	h := hmac.New(sha256.New, K)
+	h.Write(s)
+
+	mac1 := h.Sum(nil)
+	mac2 := readBytes(net)
+
+	ok := hmac.Equal(mac1, mac2)
+	net.Write(ok)
+
+	return ok
 }

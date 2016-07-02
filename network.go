@@ -25,6 +25,10 @@ func readInt(net Network) *big.Int {
 	return net.Read().(*big.Int)
 }
 
+func readString(net Network) string {
+	return net.Read().(string)
+}
+
 func readBytes(net Network) []byte {
 	return net.Read().([]byte)
 }
