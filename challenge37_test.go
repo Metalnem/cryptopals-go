@@ -21,7 +21,7 @@ func TestSrpZeroKey(t *testing.T) {
 
 	go func() {
 		net1 := &network{in: in, out: out}
-		ok1 = c.Client(net1)
+		ok1 = c.Client(params, net1)
 		wg.Done()
 	}()
 
