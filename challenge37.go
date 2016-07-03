@@ -8,7 +8,7 @@ import "math/big"
 type challenge37 struct {
 }
 
-func (c challenge37) Client(net Network) bool {
+func (challenge37) Client(net Network) bool {
 	A := big.NewInt(0)
 
 	net.Write(A)
@@ -24,6 +24,6 @@ func (c challenge37) Client(net Network) bool {
 	return net.Read().(bool)
 }
 
-func (c challenge37) Server(params srpParams, info srpClientInfo, net Network) bool {
+func (challenge37) Server(params srpParams, info srpClientInfo, net Network) bool {
 	return challenge36{}.Server(params, info, net)
 }
