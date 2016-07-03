@@ -13,3 +13,5 @@ Go solutions to the Matasano Crypto Challenges (<http://cryptopals.com/>). Solut
 33. Implement Diffie-Hellman ([problem](http://cryptopals.com/sets/5/challenges/33), [solution](https://github.com/Metalnem/cryptopals-go/blob/master/challenge33.go))
 34. Implement a MITM key-fixing attack on Diffie-Hellman with parameter injection ([problem](http://cryptopals.com/sets/5/challenges/34), [solution](https://github.com/Metalnem/cryptopals-go/blob/master/challenge34.go))
 35. Implement DH with negotiated groups, and break with malicious "g" parameters ([problem](http://cryptopals.com/sets/5/challenges/35), [solution](https://github.com/Metalnem/cryptopals-go/blob/master/challenge35.go))
+36. Implement Secure Remote Password (SRP) ([problem](http://cryptopals.com/sets/5/challenges/36), [solution](https://github.com/Metalnem/cryptopals-go/blob/master/challenge36.go))
+37. Break SRP with a zero key ([problem](http://cryptopals.com/sets/5/challenges/37), [solution](https://github.com/Metalnem/cryptopals-go/blob/master/challenge37.go))
