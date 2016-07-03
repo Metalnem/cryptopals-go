@@ -5,7 +5,6 @@ package cryptopals
 
 import (
 	"crypto/hmac"
-	"crypto/sha256"
 	"math/big"
 )
 
@@ -61,11 +60,8 @@ func (c challenge36) Client(params srpParams, info srpClientInfo, net Network) b
 	S = S.Exp(S, E, params.N)
 
 	K := sha256Digest(S.Bytes())
-	h := hmac.New(sha256.New, K)
-	h.Write(s)
-
-	mac1 := h.Sum(nil)
-	net.Write(mac1)
+	mac := hmacSHA256(K, s)
+	net.Write(mac)
 
 	return net.Read().(bool)
 }
@@ -94,10 +90,7 @@ func (c challenge36) Server(params srpParams, info srpClientInfo, net Network) b
 	S = S.Exp(S, b, params.N)
 
 	K := sha256Digest(S.Bytes())
-	h := hmac.New(sha256.New, K)
-	h.Write(s)
-
-	mac1 := h.Sum(nil)
+	mac1 := hmacSHA256(K, s)
 	mac2 := readBytes(net)
 
 	ok := hmac.Equal(mac1, mac2)
