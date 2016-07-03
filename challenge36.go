@@ -5,7 +5,6 @@ package cryptopals
 
 import (
 	"crypto/hmac"
-	"crypto/rand"
 	"crypto/sha256"
 	"math/big"
 )
@@ -24,23 +23,6 @@ type srpClientInfo struct {
 	P string
 }
 
-func (challenge36) randBytes(size int) []byte {
-	b := make([]byte, size)
-
-	if _, err := rand.Read(b); err != nil {
-		panic("Random number generator failed")
-	}
-
-	return b
-}
-
-func (challenge36) sha256Digest(b []byte) []byte {
-	h := sha256.New()
-	h.Write(b)
-
-	return h.Sum(nil)
-}
-
 func (challenge36) defaultSrpParams() srpParams {
 	var N = new(big.Int)
 	var g = big.NewInt(2)
@@ -56,7 +38,7 @@ func (challenge36) defaultSrpParams() srpParams {
 }
 
 func (c challenge36) Client(params srpParams, info srpClientInfo, net Network) bool {
-	a := new(big.Int).SetBytes(c.randBytes(32))
+	a := new(big.Int).SetBytes(randBytes(32))
 	A := new(big.Int).Exp(params.g, a, params.N)
 
 	net.Write(A)
@@ -64,10 +46,10 @@ func (c challenge36) Client(params srpParams, info srpClientInfo, net Network) b
 	s := readBytes(net)
 	B := readInt(net)
 
-	uH := c.sha256Digest(append(A.Bytes(), B.Bytes()...))
+	uH := sha256Digest(append(A.Bytes(), B.Bytes()...))
 	u := new(big.Int).SetBytes(uH)
 
-	xH := c.sha256Digest(append(s, []byte(info.P)...))
+	xH := sha256Digest(append(s, []byte(info.P)...))
 	x := new(big.Int).SetBytes(xH)
 
 	E := new(big.Int).Mul(u, x)
@@ -78,7 +60,7 @@ func (c challenge36) Client(params srpParams, info srpClientInfo, net Network) b
 	S = S.Sub(B, S)
 	S = S.Exp(S, E, params.N)
 
-	K := c.sha256Digest(S.Bytes())
+	K := sha256Digest(S.Bytes())
 	h := hmac.New(sha256.New, K)
 	h.Write(s)
 
@@ -89,13 +71,13 @@ func (c challenge36) Client(params srpParams, info srpClientInfo, net Network) b
 }
 
 func (c challenge36) Server(params srpParams, info srpClientInfo, net Network) bool {
-	s := c.randBytes(16)
-	xH := c.sha256Digest(append(s, []byte(info.P)...))
+	s := randBytes(16)
+	xH := sha256Digest(append(s, []byte(info.P)...))
 
 	x := new(big.Int).SetBytes(xH)
 	v := new(big.Int).Exp(params.g, x, params.N)
 
-	b := new(big.Int).SetBytes(c.randBytes(32))
+	b := new(big.Int).SetBytes(randBytes(32))
 	B := new(big.Int).Exp(params.g, b, params.N)
 	B = B.Add(B, new(big.Int).Mul(params.k, v))
 
@@ -104,14 +86,14 @@ func (c challenge36) Server(params srpParams, info srpClientInfo, net Network) b
 
 	A := readInt(net)
 
-	uH := c.sha256Digest(append(A.Bytes(), B.Bytes()...))
+	uH := sha256Digest(append(A.Bytes(), B.Bytes()...))
 	u := new(big.Int).SetBytes(uH)
 
 	S := new(big.Int).Exp(v, u, params.N)
 	S = S.Mul(A, S)
 	S = S.Exp(S, b, params.N)
 
-	K := c.sha256Digest(S.Bytes())
+	K := sha256Digest(S.Bytes())
 	h := hmac.New(sha256.New, K)
 	h.Write(s)
 
