@@ -46,10 +46,10 @@ func (challenge36) Client(params srpParams, info srpClientInfo, net Network) boo
 	s := readBytes(net)
 	B := readInt(net)
 
-	uH := sha256Digest(append(A.Bytes(), B.Bytes()...))
+	uH := sha256Digest(A.Bytes(), B.Bytes())
 	u := new(big.Int).SetBytes(uH)
 
-	xH := sha256Digest(append(s, []byte(info.P)...))
+	xH := sha256Digest(s, []byte(info.P))
 	x := new(big.Int).SetBytes(xH)
 
 	E := new(big.Int).Mul(u, x)
@@ -69,7 +69,7 @@ func (challenge36) Client(params srpParams, info srpClientInfo, net Network) boo
 
 func (challenge36) Server(params srpParams, info srpClientInfo, net Network) bool {
 	s := randBytes(16)
-	xH := sha256Digest(append(s, []byte(info.P)...))
+	xH := sha256Digest(s, []byte(info.P))
 
 	x := new(big.Int).SetBytes(xH)
 	v := new(big.Int).Exp(params.g, x, params.N)
@@ -83,7 +83,7 @@ func (challenge36) Server(params srpParams, info srpClientInfo, net Network) boo
 
 	A := readInt(net)
 
-	uH := sha256Digest(append(A.Bytes(), B.Bytes()...))
+	uH := sha256Digest(A.Bytes(), B.Bytes())
 	u := new(big.Int).SetBytes(uH)
 
 	S := new(big.Int).Exp(v, u, params.N)

@@ -16,9 +16,12 @@ func randBytes(size int) []byte {
 	return b
 }
 
-func sha256Digest(b []byte) []byte {
+func sha256Digest(b ...[]byte) []byte {
 	h := sha256.New()
-	h.Write(b)
+
+	for _, x := range b {
+		h.Write(x)
+	}
 
 	return h.Sum(nil)
 }
