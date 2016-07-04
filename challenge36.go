@@ -5,6 +5,7 @@ package cryptopals
 
 import (
 	"crypto/hmac"
+	"crypto/rand"
 	"math/big"
 )
 
@@ -36,8 +37,8 @@ func (challenge36) defaultSrpParams() srpParams {
 	return srpParams{N: N, g: g, k: k}
 }
 
-func (c challenge36) Client(params srpParams, info srpClientInfo, net Network) bool {
-	a := new(big.Int).SetBytes(randBytes(32))
+func (challenge36) Client(params srpParams, info srpClientInfo, net Network) bool {
+	a, _ := rand.Int(rand.Reader, params.N)
 	A := new(big.Int).Exp(params.g, a, params.N)
 
 	net.Write(A)
@@ -66,14 +67,14 @@ func (c challenge36) Client(params srpParams, info srpClientInfo, net Network) b
 	return net.Read().(bool)
 }
 
-func (c challenge36) Server(params srpParams, info srpClientInfo, net Network) bool {
+func (challenge36) Server(params srpParams, info srpClientInfo, net Network) bool {
 	s := randBytes(16)
 	xH := sha256Digest(append(s, []byte(info.P)...))
 
 	x := new(big.Int).SetBytes(xH)
 	v := new(big.Int).Exp(params.g, x, params.N)
 
-	b := new(big.Int).SetBytes(randBytes(32))
+	b, _ := rand.Int(rand.Reader, params.N)
 	B := new(big.Int).Exp(params.g, b, params.N)
 	B = B.Add(B, new(big.Int).Mul(params.k, v))
 
