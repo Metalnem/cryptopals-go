@@ -6,6 +6,7 @@ package cryptopals
 import (
 	"crypto/hmac"
 	"crypto/rand"
+	"errors"
 	"math/big"
 )
 
@@ -67,4 +68,38 @@ func (challenge38) Server(params srpParams, info srpClientInfo, net Network) boo
 	net.Write(ok)
 
 	return ok
+}
+
+func (challenge38) Attacker(params srpParams, dict []string, net Network) (string, error) {
+	A := readInt(net)
+
+	s := big.NewInt(0)
+	sB := s.Bytes()
+
+	B := params.g
+	u := big.NewInt(1)
+
+	net.Write(sB)
+	net.Write(B)
+	net.Write(u)
+
+	mac := readBytes(net)
+	net.Write(false)
+
+	for _, password := range dict {
+		xH := sha256Digest(sB, []byte(password))
+		x := new(big.Int).SetBytes(xH)
+
+		S := new(big.Int).Exp(params.g, x, params.N)
+		S = S.Mul(A, s)
+		S = S.Mod(S, params.N)
+
+		K := sha256Digest(S.Bytes())
+
+		if hmac.Equal(mac, hmacSHA256(K, sB)) {
+			return password, nil
+		}
+	}
+
+	return "", errors.New("Failed to crack the password")
 }
