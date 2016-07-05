@@ -21,6 +21,8 @@ func TestSimplifiedSrp(t *testing.T) {
 	var err error
 
 	dict := []string{
+		"password",
+		"123",
 		"password123",
 	}
 

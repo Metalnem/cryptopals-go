@@ -91,7 +91,7 @@ func (challenge38) Attacker(params srpParams, dict []string, net Network) (strin
 		x := new(big.Int).SetBytes(xH)
 
 		S := new(big.Int).Exp(params.g, x, params.N)
-		S = S.Mul(A, s)
+		S = S.Mul(A, S)
 		S = S.Mod(S, params.N)
 
 		K := sha256Digest(S.Bytes())
