@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestAttackerKeyFixing(t *testing.T) {
+func TestKeyFixingAttack(t *testing.T) {
 	c := challenge34{}
 
 	inClient := make(chan interface{}, 3)
@@ -35,7 +35,7 @@ func TestAttackerKeyFixing(t *testing.T) {
 	go func() {
 		netClient := &network{in: outClient, out: inClient}
 		netServer := &network{in: outServer, out: inServer}
-		clientMessage, serverMessage = c.AttackerKeyFixing(netClient, netServer)
+		clientMessage, serverMessage = c.Attacker(netClient, netServer)
 		wg.Done()
 	}()
 

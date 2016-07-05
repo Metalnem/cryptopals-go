@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestSrpZeroKey(t *testing.T) {
+func TestSrpZeroKeyAttack(t *testing.T) {
 	c := challenge37{}
 
 	params := challenge36{}.defaultSrpParams()
