@@ -4,6 +4,7 @@ import (
 	"crypto/hmac"
 	"crypto/rand"
 	"crypto/sha256"
+	"math/big"
 )
 
 func randBytes(size int) []byte {
@@ -14,6 +15,16 @@ func randBytes(size int) []byte {
 	}
 
 	return b
+}
+
+func randPrime(bits int) *big.Int {
+	p, err := rand.Prime(rand.Reader, bits)
+
+	if err != nil {
+		panic("Random number generator failed")
+	}
+
+	return p
 }
 
 func sha256Digest(b ...[]byte) []byte {
