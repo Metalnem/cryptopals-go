@@ -14,19 +14,29 @@ type publicKey struct {
 }
 
 func generateRsaPrivateKey(bits int) *privateKey {
-	p := randPrime(bits / 2)
-	q := randPrime(bits / 2)
-
 	e := big.NewInt(3)
-	n := new(big.Int).Mul(p, q)
 
-	t1 := new(big.Int).Sub(p, big.NewInt(1))
-	t2 := new(big.Int).Sub(q, big.NewInt(1))
+	for {
+		p := randPrime(bits / 2)
+		t1 := new(big.Int).Sub(p, big.NewInt(1))
 
-	t := new(big.Int).Mul(t1, t2)
-	d := new(big.Int).ModInverse(e, t)
+		if new(big.Int).Mod(t1, e).Int64() == 0 {
+			continue
+		}
 
-	return &privateKey{e: e, n: n, d: d}
+		q := randPrime(bits / 2)
+		t2 := new(big.Int).Sub(q, big.NewInt(1))
+
+		if new(big.Int).Mod(t2, e).Int64() == 0 {
+			continue
+		}
+
+		n := new(big.Int).Mul(p, q)
+		t := new(big.Int).Mul(t1, t2)
+		d := new(big.Int).ModInverse(e, t)
+
+		return &privateKey{e: e, n: n, d: d}
+	}
 }
 
 func (key *privateKey) publicKey() *publicKey {
