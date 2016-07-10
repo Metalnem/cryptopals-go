@@ -7,7 +7,7 @@ import (
 
 func TestRsa(t *testing.T) {
 	c := challenge39{}
-	priv := generateRsaPrivateKey(4096)
+	priv := generateRsaPrivateKey(2048)
 	pub := priv.publicKey()
 
 	m1 := "Modular multiplicative inverse"
