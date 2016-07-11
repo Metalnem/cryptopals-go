@@ -21,8 +21,8 @@ func (challenge41) Client(key *publicKey, net Network) string {
 	net.Write(C)
 
 	p := readInt(net)
-	P := new(big.Int).ModInverse(p, key.n)
-	P = P.Mul(P, p).Mod(P, key.n)
+	P := new(big.Int).ModInverse(S, key.n)
+	P = P.Mul(p, P).Mod(P, key.n)
 
 	return string(P.Bytes())
 }
