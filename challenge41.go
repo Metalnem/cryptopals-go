@@ -12,29 +12,29 @@ type challenge41 struct {
 }
 
 func (challenge41) Client(key *publicKey, net Network) string {
-	c := readInt(net)
+	CS := readInt(net)
 
 	S, _ := rand.Int(rand.Reader, key.n)
-	C := new(big.Int).Exp(S, key.e, key.n)
-	C = C.Mul(C, c).Mod(C, key.n)
+	CC := new(big.Int).Exp(S, key.e, key.n)
+	CC = CC.Mul(CS, CC).Mod(CC, key.n)
 
-	net.Write(C)
+	net.Write(CC)
 
-	p := readInt(net)
-	P := new(big.Int).ModInverse(S, key.n)
-	P = P.Mul(p, P).Mod(P, key.n)
+	PS := readInt(net)
+	PC := new(big.Int).ModInverse(S, key.n)
+	PC = PC.Mul(PS, PC).Mod(PC, key.n)
 
-	return string(P.Bytes())
+	return string(PC.Bytes())
 }
 
 func (challenge41) Server(message string, key *privateKey, net Network) {
-	p := new(big.Int).SetBytes([]byte(message))
-	c := key.publicKey().encrypt(p)
+	m := new(big.Int).SetBytes([]byte(message))
+	c := key.publicKey().encrypt(m)
 
 	net.Write(c)
 
 	C := readInt(net)
-	P := key.decrypt(C)
+	M := key.decrypt(C)
 
-	net.Write(P)
+	net.Write(M)
 }
