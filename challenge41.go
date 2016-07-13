@@ -29,7 +29,7 @@ func (challenge41) Client(key *publicKey, net Network) string {
 
 func (challenge41) Server(message string, key *privateKey, net Network) {
 	m := new(big.Int).SetBytes([]byte(message))
-	c := key.publicKey().encrypt(m)
+	c := key.encrypt(m)
 
 	net.Write(c)
 

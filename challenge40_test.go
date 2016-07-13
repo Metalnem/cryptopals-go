@@ -14,9 +14,9 @@ func TestRsaBroadcastAttack(t *testing.T) {
 	priv1 := generateRsaPrivateKey(2048)
 	priv2 := generateRsaPrivateKey(2048)
 
-	pub0 := priv0.publicKey()
-	pub1 := priv1.publicKey()
-	pub2 := priv2.publicKey()
+	pub0 := priv0.public()
+	pub1 := priv1.public()
+	pub2 := priv2.public()
 
 	c0 := pub0.encrypt(mx)
 	c1 := pub1.encrypt(mx)

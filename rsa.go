@@ -3,8 +3,7 @@ package cryptopals
 import "math/big"
 
 type privateKey struct {
-	e *big.Int
-	n *big.Int
+	publicKey
 	d *big.Int
 }
 
@@ -35,7 +34,7 @@ func generateRsaPrivateKey(bits int) *privateKey {
 		t := new(big.Int).Mul(t1, t2)
 		d := new(big.Int).ModInverse(e, t)
 
-		return &privateKey{e: e, n: n, d: d}
+		return &privateKey{publicKey: publicKey{e: e, n: n}, d: d}
 	}
 }
 
@@ -43,12 +42,8 @@ func (key *publicKey) size() int {
 	return len(key.n.Bytes())
 }
 
-func (key *privateKey) size() int {
-	return len(key.n.Bytes())
-}
-
-func (key *privateKey) publicKey() *publicKey {
-	return &publicKey{e: key.e, n: key.n}
+func (key *privateKey) public() *publicKey {
+	return &key.publicKey
 }
 
 func (key *publicKey) encrypt(m *big.Int) *big.Int {

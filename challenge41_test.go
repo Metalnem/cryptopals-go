@@ -10,7 +10,7 @@ func TestUnpaddedMessageRecoveryOracle(t *testing.T) {
 
 	m1 := "I've got the moves like Jagger"
 	priv := generateRsaPrivateKey(2048)
-	pub := priv.publicKey()
+	pub := priv.public()
 
 	in := make(chan interface{}, 1)
 	out := make(chan interface{}, 1)

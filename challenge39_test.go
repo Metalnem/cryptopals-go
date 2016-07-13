@@ -8,7 +8,7 @@ import (
 func TestRsa(t *testing.T) {
 	c := challenge39{}
 	priv := generateRsaPrivateKey(2048)
-	pub := priv.publicKey()
+	pub := priv.public()
 
 	m1 := "Modular multiplicative inverse"
 	enc := c.RsaEncrypt(pub, new(big.Int).SetBytes([]byte(m1)))
