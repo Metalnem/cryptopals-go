@@ -39,7 +39,7 @@ func generateRsaPrivateKey(bits int) *privateKey {
 }
 
 func (key *publicKey) size() int {
-	return len(key.n.Bytes())
+	return 8 * len(key.n.Bytes())
 }
 
 func (key *privateKey) public() *publicKey {
