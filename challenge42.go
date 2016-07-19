@@ -12,8 +12,8 @@ import (
 type challenge42 struct {
 }
 
-func (challenge42) format(bitSize int, data []byte) []byte {
-	b := make([]byte, bitSize/8)
+func (challenge42) format(size bitSize, data []byte) []byte {
+	b := make([]byte, int(size.toByteSize()))
 	h := sha256Digest(data)
 	pos := len(b) - len(h) - 1
 
@@ -63,11 +63,11 @@ func (challenge42) verify(key *publicKey, data []byte, signature *big.Int) bool 
 }
 
 func (x challenge42) ForgeRsaSignature(data []byte) *big.Int {
-	keySize := 3072
-	shift := 2072
+	keySize := bitSize(3072)
+	shift := bitSize(2072)
 
 	b1 := x.format(keySize-shift, data)
-	b2 := bytes.Repeat([]byte{255}, shift/8)
+	b2 := bytes.Repeat([]byte{255}, int(shift.toByteSize()))
 	b := append(b1, b2...)
 
 	return cbrt(new(big.Int).SetBytes(b))
