@@ -3,7 +3,9 @@ package cryptopals
 import (
 	"crypto/hmac"
 	"crypto/rand"
+	"crypto/sha1"
 	"crypto/sha256"
+	"hash"
 	"math/big"
 )
 
@@ -17,6 +19,16 @@ func randBytes(size int) []byte {
 	return b
 }
 
+func randInt(max *big.Int) *big.Int {
+	n, err := rand.Int(rand.Reader, max)
+
+	if err != nil {
+		panic("Random number generator failed")
+	}
+
+	return n
+}
+
 func randPrime(size bitSize) *big.Int {
 	p, err := rand.Prime(rand.Reader, int(size))
 
@@ -27,8 +39,16 @@ func randPrime(size bitSize) *big.Int {
 	return p
 }
 
+func sha1Digest(b ...[]byte) []byte {
+	return hashDigest(sha1.New, b...)
+}
+
 func sha256Digest(b ...[]byte) []byte {
-	h := sha256.New()
+	return hashDigest(sha256.New, b...)
+}
+
+func hashDigest(f func() hash.Hash, b ...[]byte) []byte {
+	h := f()
 
 	for _, x := range b {
 		h.Write(x)
