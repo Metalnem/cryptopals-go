@@ -17,8 +17,8 @@ func randBytes(size int) []byte {
 	return b
 }
 
-func randPrime(bits int) *big.Int {
-	p, err := rand.Prime(rand.Reader, bits)
+func randPrime(size bitSize) *big.Int {
+	p, err := rand.Prime(rand.Reader, int(size))
 
 	if err != nil {
 		panic("Random number generator failed")

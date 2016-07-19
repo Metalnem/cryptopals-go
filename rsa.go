@@ -12,18 +12,18 @@ type publicKey struct {
 	n *big.Int
 }
 
-func generateRsaPrivateKey(bits int) *privateKey {
+func generateRsaPrivateKey(size bitSize) *privateKey {
 	e := big.NewInt(3)
 
 	for {
-		p := randPrime(bits / 2)
+		p := randPrime(size / 2)
 		t1 := new(big.Int).Sub(p, big.NewInt(1))
 
 		if new(big.Int).Mod(t1, e).Int64() == 0 {
 			continue
 		}
 
-		q := randPrime(bits / 2)
+		q := randPrime(size / 2)
 		t2 := new(big.Int).Sub(q, big.NewInt(1))
 
 		if new(big.Int).Mod(t2, e).Int64() == 0 {

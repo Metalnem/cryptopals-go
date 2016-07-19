@@ -4,9 +4,9 @@ type bitSize int
 type byteSize int
 
 func (size bitSize) toByteSize() byteSize {
-	return byteSize(8 * size)
+	return byteSize(size / 8)
 }
 
 func (size byteSize) toBitSize() bitSize {
-	return bitSize(size / 8)
+	return bitSize(8 * size)
 }
