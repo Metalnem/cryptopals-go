@@ -112,7 +112,7 @@ func (key *dsaPrivateKey) sign(data []byte) *dsaSignature {
 	}
 }
 
-func (key *dsaPrivateKey) verify(data []byte, signature *dsaSignature) bool {
+func (key *dsaPublicKey) verify(data []byte, signature *dsaSignature) bool {
 	r := signature.r
 	s := signature.s
 
@@ -129,7 +129,7 @@ func (key *dsaPrivateKey) verify(data []byte, signature *dsaSignature) bool {
 	u2 = u2.Mod(u2, key.q)
 
 	v1 := new(big.Int).Exp(key.g, u1, key.p)
-	v2 := new(big.Int).Exp(key.g, u2, key.p)
+	v2 := new(big.Int).Exp(key.y, u2, key.p)
 
 	v := new(big.Int).Mul(v1, v2)
 	v = v.Mod(v, key.p).Mod(v, key.q)

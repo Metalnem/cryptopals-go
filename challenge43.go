@@ -15,17 +15,17 @@ func (challenge43) RecoverDsaKeyFromNonce(data []byte, pub *dsaPublicKey, signat
 	priv := &dsaPrivateKey{dsaPublicKey: *pub}
 	var i int64
 
-	for i = 0; i < 65536; i++ {
+	for i = 1; i < 65536; i++ {
 		k := big.NewInt(i)
 
 		x := new(big.Int).Mul(signature.s, k)
-		x = x.Sub(x, dsaHash(data))
+		x = x.Sub(x, dsaHash(data)).Mod(x, pub.q)
 		x = x.Mul(x, new(big.Int).ModInverse(signature.r, pub.q))
 		x = x.Mod(x, pub.q)
 
 		priv.x = x
 
-		if priv.verify(data, signature) {
+		if pub.verify(data, priv.sign(data)) {
 			return priv, nil
 		}
 	}
