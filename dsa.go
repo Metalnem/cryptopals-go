@@ -88,6 +88,27 @@ func (key *dsaPrivateKey) sign(data []byte) *dsaSignature {
 	}
 }
 
-func (key *dsaPrivateKey) verify(data []byte, signature *big.Int) bool {
-	return false
+func (key *dsaPrivateKey) verify(data []byte, signature *dsaSignature) bool {
+	r := signature.r
+	s := signature.s
+
+	if r.Sign() == 0 || r.Cmp(key.q) >= 0 || s.Sign() == 0 || s.Cmp(key.q) >= 0 {
+		return false
+	}
+
+	w := new(big.Int).ModInverse(s, key.q)
+
+	u1 := new(big.Int).Mul(dsaHash(data), w)
+	u1 = u1.Mod(u1, key.q)
+
+	u2 := new(big.Int).Mul(r, w)
+	u2 = u2.Mod(u2, key.q)
+
+	v1 := new(big.Int).Exp(key.g, u1, key.p)
+	v2 := new(big.Int).Exp(key.g, u2, key.p)
+
+	v := new(big.Int).Mul(v1, v2)
+	v = v.Mod(v, key.p).Mod(v, key.q)
+
+	return v.Cmp(r) == 0
 }
