@@ -57,8 +57,16 @@ func hashDigest(f func() hash.Hash, b ...[]byte) []byte {
 	return h.Sum(nil)
 }
 
+func hmacSHA1(key, message []byte) []byte {
+	return hmacHash(sha1.New, key, message)
+}
+
 func hmacSHA256(key, message []byte) []byte {
-	h := hmac.New(sha256.New, key)
+	return hmacHash(sha256.New, key, message)
+}
+
+func hmacHash(f func() hash.Hash, key, message []byte) []byte {
+	h := hmac.New(f, key)
 	h.Write(message)
 
 	return h.Sum(nil)

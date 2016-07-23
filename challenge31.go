@@ -4,7 +4,6 @@
 package cryptopals
 
 import (
-	"crypto/hmac"
 	"crypto/sha1"
 	"encoding/hex"
 	"log"
@@ -36,9 +35,7 @@ func (s *hmacSHA1Server) start() {
 }
 
 func (s *hmacSHA1Server) insecureCompare(file, sig []byte) int {
-	h := hmac.New(sha1.New, s.key)
-	h.Write(file)
-	mac := h.Sum(nil)
+	mac := hmacSHA1(s.key, file)
 
 	if len(sig) != len(mac) {
 		return 0
