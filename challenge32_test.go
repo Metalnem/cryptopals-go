@@ -1,8 +1,6 @@
 package cryptopals
 
 import (
-	"crypto/hmac"
-	"crypto/sha1"
 	"encoding/hex"
 	"testing"
 	"time"
@@ -22,11 +20,10 @@ func TestForgeHmacSHA1SignaturePrecise(t *testing.T) {
 	time.Sleep(time.Second)
 
 	file := "Vanilla Ice"
-	h := hmac.New(sha1.New, key)
-	h.Write([]byte(file))
+	mac := hmacSHA1(key, []byte(file))
 
 	signature := challenge32{}.ForgeHmacSHA1SignaturePrecise("http://localhost:9000/test", file)
-	expected := hex.EncodeToString(h.Sum(nil))
+	expected := hex.EncodeToString(mac)
 	actual := hex.EncodeToString(signature)
 
 	if expected != actual {
