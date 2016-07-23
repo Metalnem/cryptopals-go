@@ -6,7 +6,6 @@ package cryptopals
 import (
 	"crypto/aes"
 	"crypto/rand"
-	"crypto/sha1"
 	"math/big"
 )
 
@@ -14,10 +13,7 @@ type challenge34 struct {
 }
 
 func (challenge34) generateKey(s *big.Int) []byte {
-	h := sha1.New()
-	h.Write(s.Bytes())
-
-	return h.Sum(nil)[0:aes.BlockSize]
+	return sha1Digest(s.Bytes())[0:aes.BlockSize]
 }
 
 func (x challenge34) Client(message []byte, net Network) {
