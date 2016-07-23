@@ -16,12 +16,7 @@ type macMD4Server struct {
 }
 
 func (s *macMD4Server) sign(message []byte) []byte {
-	h := New()
-
-	h.Write(s.key)
-	h.Write(message)
-
-	return h.Sum(nil)
+	return hashDigest(New, s.key, message)
 }
 
 func (s *macMD4Server) validate(message, mac []byte) bool {
