@@ -11,8 +11,6 @@ func TestDecryptRsaParityOracle(t *testing.T) {
 	priv := generateRsaPrivateKey(1024)
 	pub := priv.public()
 
-	fmt.Printf("n: %v\n\n", pub.n)
-
 	encoded := "VGhhdCdzIHdoeSBJIGZvdW5kIHlvdSBkb24ndCBwbGF5IGFyb3VuZCB3aXRoIHRoZSBGdW5reSBDb2xkIE1lZGluYQ=="
 	message, _ := base64.RawStdEncoding.DecodeString(encoded)
 	m1 := new(big.Int).SetBytes(message)
