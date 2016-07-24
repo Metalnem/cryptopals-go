@@ -40,7 +40,6 @@ func (challenge46) DecryptRsaParityOracle(server *parityOracleServer, pub *publi
 		} else {
 			high = mid
 		}
-
 	}
 
 	return high
