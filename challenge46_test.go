@@ -19,9 +19,9 @@ func TestDecryptRsaParityOracle(t *testing.T) {
 	c := pub.encrypt(m1)
 	m2 := challenge46{}.DecryptRsaParityOracle(server, pub, c)
 
-	s1 := string(m1.Bytes())
-	s2 := string(m2.Bytes())
+	//s1 := string(m1.Bytes())
+	//s2 := string(m2.Bytes())
 
-	fmt.Println(s1)
-	fmt.Println(s2)
+	fmt.Println(m1)
+	fmt.Println(m2)
 }
