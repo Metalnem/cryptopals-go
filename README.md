@@ -26,3 +26,4 @@ Go solutions to the Matasano Crypto Challenges (<http://cryptopals.com/>). Solut
 43. DSA key recovery from nonce ([problem](http://cryptopals.com/sets/6/challenges/43), [solution](https://github.com/Metalnem/cryptopals-go/blob/master/challenge43.go))
 44. DSA nonce recovery from repeated nonce ([problem](http://cryptopals.com/sets/6/challenges/44), [solution](https://github.com/Metalnem/cryptopals-go/blob/master/challenge44.go))
 45. DSA parameter tampering ([problem](http://cryptopals.com/sets/6/challenges/45), [solution](https://github.com/Metalnem/cryptopals-go/blob/master/challenge45.go))
+46. RSA parity oracle ([problem](http://cryptopals.com/sets/6/challenges/46), [solution](https://github.com/Metalnem/cryptopals-go/blob/master/challenge46.go))
