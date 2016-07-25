@@ -26,10 +26,11 @@ func (challenge46) DecryptRsaParityOracle(server *parityOracleServer, pub *publi
 	high := new(big.Int).Set(pub.n)
 
 	candidate := new(big.Int).Set(c)
-	two := pub.encrypt(big.NewInt(2))
+	two := big.NewInt(2)
+	multiplier := pub.encrypt(two)
 
 	for low.Cmp(high) < 0 {
-		candidate = candidate.Mul(candidate, two)
+		candidate = candidate.Mul(candidate, multiplier)
 		candidate = candidate.Mod(candidate, pub.n)
 
 		mid := new(big.Int).Add(low, high)
