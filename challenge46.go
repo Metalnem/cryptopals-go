@@ -3,7 +3,10 @@
 
 package cryptopals
 
-import "math/big"
+import (
+	"errors"
+	"math/big"
+)
 
 type challenge46 struct {
 }
@@ -21,7 +24,7 @@ func (server *parityOracleServer) isOdd(c *big.Int) bool {
 	return mod.Sign() > 0
 }
 
-func (challenge46) DecryptRsaParityOracle(server *parityOracleServer, pub *publicKey, c *big.Int) *big.Int {
+func (challenge46) DecryptRsaParityOracle(server *parityOracleServer, pub *publicKey, c *big.Int) (*big.Int, error) {
 	low := big.NewInt(0)
 	high := new(big.Int).Set(pub.n)
 
@@ -43,5 +46,15 @@ func (challenge46) DecryptRsaParityOracle(server *parityOracleServer, pub *publi
 		}
 	}
 
-	return high
+	for i := 0; i < 256; i++ {
+		b := high.Bytes()
+		b[len(b)-1] = byte(i)
+		high.SetBytes(b)
+
+		if pub.encrypt(high).Cmp(c) == 0 {
+			return high, nil
+		}
+	}
+
+	return nil, errors.New("Failed to decrypt RSA enrypted message using parity oracle")
 }

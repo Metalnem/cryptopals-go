@@ -16,13 +16,14 @@ func TestDecryptRsaParityOracle(t *testing.T) {
 
 	server := &parityOracleServer{priv: *priv}
 	c := pub.encrypt(m1)
-	m2 := challenge46{}.DecryptRsaParityOracle(server, pub, c)
+	m2, err := challenge46{}.DecryptRsaParityOracle(server, pub, c)
+
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	actual := string(m2.Bytes())
 	expected := string(message)
-
-	actual = actual[0 : len(actual)-1]
-	expected = actual[0 : len(expected)-1]
 
 	if actual != expected {
 		t.Fatalf("Expected %v, was %v", expected, actual)
