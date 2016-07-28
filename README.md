@@ -27,3 +27,10 @@ Go solutions to the Matasano Crypto Challenges (<http://cryptopals.com/>). Solut
 44. DSA nonce recovery from repeated nonce ([problem](http://cryptopals.com/sets/6/challenges/44), [solution](https://github.com/Metalnem/cryptopals-go/blob/master/challenge44.go), [test](https://github.com/Metalnem/cryptopals-go/blob/master/challenge44_test.go))
 45. DSA parameter tampering ([problem](http://cryptopals.com/sets/6/challenges/45), [solution](https://github.com/Metalnem/cryptopals-go/blob/master/challenge45.go), [test](https://github.com/Metalnem/cryptopals-go/blob/master/challenge45_test.go))
 46. RSA parity oracle ([problem](http://cryptopals.com/sets/6/challenges/46), [solution](https://github.com/Metalnem/cryptopals-go/blob/master/challenge46.go), [test](https://github.com/Metalnem/cryptopals-go/blob/master/challenge46_test.go))
+
+## Useful links
+
+1. [Bleichenbacher's RSA signature forgery based on implementation error](https://www.ietf.org/mail-archive/web/openpgp/current/msg00999.html) (challenge 42)
+2. [The Debian PGP disaster that almost was](https://rdist.root.org/2009/05/17/the-debian-pgp-disaster-that-almost-was/) (challenge 43)
+3. [DSA requirements for random k value](https://rdist.root.org/2010/11/19/dsa-requirements-for-random-k-value/) (challenge 44)
+4. [Chosen Ciphertext Attacks Against Protocols Based on the RSA Encryption Standard PKCS #1](http://archiv.infsec.ethz.ch/education/fs08/secsem/Bleichenbacher98.pdf) (challenges 47 and 48)
