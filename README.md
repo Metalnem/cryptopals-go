@@ -27,6 +27,8 @@ Go solutions to the Matasano Crypto Challenges (<http://cryptopals.com/>). Solut
 44. DSA nonce recovery from repeated nonce ([problem](http://cryptopals.com/sets/6/challenges/44), [solution](https://github.com/Metalnem/cryptopals-go/blob/master/challenge44.go), [test](https://github.com/Metalnem/cryptopals-go/blob/master/challenge44_test.go))
 45. DSA parameter tampering ([problem](http://cryptopals.com/sets/6/challenges/45), [solution](https://github.com/Metalnem/cryptopals-go/blob/master/challenge45.go), [test](https://github.com/Metalnem/cryptopals-go/blob/master/challenge45_test.go))
 46. RSA parity oracle ([problem](http://cryptopals.com/sets/6/challenges/46), [solution](https://github.com/Metalnem/cryptopals-go/blob/master/challenge46.go), [test](https://github.com/Metalnem/cryptopals-go/blob/master/challenge46_test.go))
+47. Bleichenbacher's PKCS 1.5 Padding Oracle (Simple Case) ([problem](http://cryptopals.com/sets/6/challenges/47), [solution](https://github.com/Metalnem/cryptopals-go/blob/master/challenge47.go), [test](https://github.com/Metalnem/cryptopals-go/blob/master/challenge47_test.go))
+48. Bleichenbacher's PKCS 1.5 Padding Oracle (Complete Case) ([problem](http://cryptopals.com/sets/6/challenges/48), [solution](https://github.com/Metalnem/cryptopals-go/blob/master/challenge48.go), [test](https://github.com/Metalnem/cryptopals-go/blob/master/challenge48_test.go))
 
 ## Useful links
 
