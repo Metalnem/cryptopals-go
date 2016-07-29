@@ -8,6 +8,6 @@ import "crypto/rsa"
 type challenge48 struct {
 }
 
-func (challenge48) DecryptRsaPaddingOracleComplete(pub *rsa.PublicKey, ciphertext []byte) []byte {
-	return challenge47{}.DecryptRsaPaddingOracleSimple(pub, ciphertext)
+func (challenge48) DecryptRsaPaddingOracleComplete(pub *rsa.PublicKey, ciphertext []byte, oracle oracleFunc) []byte {
+	return challenge47{}.DecryptRsaPaddingOracleSimple(pub, ciphertext, oracle)
 }

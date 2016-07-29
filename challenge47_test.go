@@ -15,13 +15,18 @@ func TestDecryptRsaPaddingOracleSimple(t *testing.T) {
 	pub := priv.PublicKey
 
 	expected := "Chosen Ciphertext Attacks Against Protocols Based on the RSA Encryption Standard PKCS #1"
-	ciphertext, err := rsa.EncryptPKCS1v15(rand.Reader, &pub, []byte(expected))
+	ciphertext, err := rsa.EncryptPKCS1v15(nil, &pub, []byte(expected))
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	actual := string(c.DecryptRsaPaddingOracleSimple(&pub, ciphertext))
+	oracle := func(ciphertext []byte) bool {
+		_, err := rsa.DecryptPKCS1v15(nil, priv, ciphertext)
+		return err != nil
+	}
+
+	actual := string(c.DecryptRsaPaddingOracleSimple(&pub, ciphertext, oracle))
 
 	if actual != expected {
 		t.Fatalf("Expected %v, was %v", expected, actual)

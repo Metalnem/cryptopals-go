@@ -8,6 +8,8 @@ import "crypto/rsa"
 type challenge47 struct {
 }
 
-func (challenge47) DecryptRsaPaddingOracleSimple(pub *rsa.PublicKey, ciphertext []byte) []byte {
+type oracleFunc func([]byte) bool
+
+func (challenge47) DecryptRsaPaddingOracleSimple(pub *rsa.PublicKey, ciphertext []byte, oracle oracleFunc) []byte {
 	return nil
 }
