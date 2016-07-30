@@ -38,22 +38,6 @@ func (challenge47) floor(x, y *big.Int) *big.Int {
 	return new(big.Int).Div(x, y)
 }
 
-func (challenge47) max(x, y *big.Int) *big.Int {
-	if x.Cmp(y) < 0 {
-		return y
-	}
-
-	return x
-}
-
-func (challenge47) min(x, y *big.Int) *big.Int {
-	if x.Cmp(y) < 0 {
-		return x
-	}
-
-	return y
-}
-
 func (x challenge47) DecryptRsaPaddingOracleSimple(pub *rsa.PublicKey, ciphertext []byte, oracle oracleFunc) []byte {
 	e, c := big.NewInt(int64(pub.E)), new(big.Int).SetBytes(ciphertext)
 	s, s0, c0, i := new(big.Int), new(big.Int), new(big.Int), 1
@@ -117,10 +101,10 @@ func (x challenge47) DecryptRsaPaddingOracleSimple(pub *rsa.PublicKey, ciphertex
 
 			for r := rMin; r.Cmp(rMax) <= 0; r = r.Add(r, one) {
 				a := new(big.Int).Mul(r, pub.N)
-				a = x.max(m.a, x.ceil(a.Add(twoB, a), s))
+				a = max(m.a, x.ceil(a.Add(twoB, a), s))
 
 				b := new(big.Int).Mul(r, pub.N)
-				b = x.min(m.b, x.floor(b.Add(threeB, b).Sub(threeB, one), s))
+				b = min(m.b, x.floor(b.Add(threeB, b).Sub(threeB, one), s))
 
 				mi := interval{a: a, b: b}
 				Mi = append(Mi, mi)
