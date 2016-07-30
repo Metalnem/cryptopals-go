@@ -23,6 +23,26 @@ func (challenge47) mulEncrypt(m, e, n, c *big.Int) []byte {
 	return x.Mul(c, x).Mod(x, n).Bytes()
 }
 
+func (challenge47) union(M []interval, m interval) []interval {
+	if m.a.Cmp(m.b) > 0 {
+		return M
+	}
+
+	var result []interval
+
+	for i, mi := range M {
+		if mi.b.Cmp(m.a) < 0 {
+			result = append(result, mi)
+		} else if m.b.Cmp(mi.a) < 0 {
+			return append(append(result, m), M[i:]...)
+		} else {
+			m = interval{a: min(mi.a, m.a), b: max(mi.b, m.b)}
+		}
+	}
+
+	return append(result, m)
+}
+
 func (x challenge47) DecryptRsaPaddingOracleSimple(pub *rsa.PublicKey, ciphertext []byte, oracle oracleFunc) []byte {
 	e, c := big.NewInt(int64(pub.E)), new(big.Int).SetBytes(ciphertext)
 	s, s0, c0, i := new(big.Int), new(big.Int), new(big.Int), 1
@@ -92,7 +112,7 @@ func (x challenge47) DecryptRsaPaddingOracleSimple(pub *rsa.PublicKey, ciphertex
 				b = min(m.b, floor(b.Add(threeB, b).Sub(threeB, one), s))
 
 				mi := interval{a: a, b: b}
-				Mi = append(Mi, mi)
+				Mi = x.union(Mi, mi)
 			}
 		}
 
