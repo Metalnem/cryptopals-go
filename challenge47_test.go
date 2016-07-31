@@ -9,10 +9,10 @@ import (
 func TestDecryptRsaPaddingOracleSimple(t *testing.T) {
 	c := challenge47{}
 
-	priv, _ := rsa.GenerateKey(rand.Reader, 1024)
+	priv, _ := rsa.GenerateKey(rand.Reader, 768)
 	pub := priv.PublicKey
 
-	expected := "Chosen Ciphertext Attacks Against Protocols Based on the RSA Encryption Standard PKCS #1"
+	expected := "kick it, CC"
 	ciphertext, err := rsa.EncryptPKCS1v15(rand.Reader, &pub, []byte(expected))
 
 	if err != nil {
