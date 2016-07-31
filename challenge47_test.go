@@ -7,7 +7,7 @@ import (
 )
 
 func TestDecryptRsaPaddingOracleSimple(t *testing.T) {
-	c := challenge47{}
+	t.Skip("Skip this test, because it runs too long")
 
 	priv, _ := rsa.GenerateKey(rand.Reader, 768)
 	pub := priv.PublicKey
@@ -24,7 +24,7 @@ func TestDecryptRsaPaddingOracleSimple(t *testing.T) {
 		return err == nil
 	}
 
-	actual := string(c.DecryptRsaPaddingOracleSimple(&pub, ciphertext, oracle))
+	actual := string(challenge47{}.DecryptRsaPaddingOracleSimple(&pub, ciphertext, oracle))
 
 	if actual != expected {
 		t.Fatalf("Expected %v, was %v", expected, actual)
