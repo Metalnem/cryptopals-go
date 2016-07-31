@@ -62,7 +62,6 @@ func (x challenge47) DecryptRsaPaddingOracleSimple(pub *rsa.PublicKey, ciphertex
 		} else if len(M) > 1 { // Step 2.b: Searching with more than one interval left.
 			for s = s.Add(s, one); !oracle(x.mulEncrypt(s, e, pub.N, c0)); s = s.Add(s, one) {
 			}
-
 		} else { // Step 2.c: Searching with one interval left.
 			a, b, found := M[0].a, M[0].b, false
 
