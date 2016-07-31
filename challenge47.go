@@ -53,7 +53,7 @@ func (x challenge47) DecryptRsaPaddingOracleSimple(pub *rsa.PublicKey, ciphertex
 	B = B.Mul(eight, B).Exp(two, B, nil)
 
 	twoB, threeB := new(big.Int).Mul(two, B), new(big.Int).Mul(three, B)
-	M := []interval{interval{a: twoB, b: new(big.Int).Sub(threeB, one)}}
+	M := []interval{{a: twoB, b: new(big.Int).Sub(threeB, one)}}
 
 	// Step 2: Searching for PKCS conforming messages.
 	for i := 1; ; i++ {
