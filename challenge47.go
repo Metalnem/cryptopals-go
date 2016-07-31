@@ -66,16 +66,16 @@ func (x challenge47) DecryptRsaPaddingOracleSimple(pub *rsa.PublicKey, ciphertex
 			a, b, found := M[0].a, M[0].b, false
 
 			r := new(big.Int).Mul(b, s)
-			r = r.Sub(r, twoB).Mul(two, r).Div(r, pub.N)
+			r = ceil(r.Sub(r, twoB).Mul(two, r), pub.N)
 
 			for ; !found; r = r.Add(r, one) {
 				sMin := new(big.Int).Mul(r, pub.N)
-				sMin = sMin.Add(twoB, sMin).Div(sMin, b)
+				sMin = ceil(sMin.Add(twoB, sMin), b)
 
 				sMax := new(big.Int).Mul(r, pub.N)
 				sMax = sMax.Add(threeB, sMax).Div(sMax, a)
 
-				for s = sMin; s.Cmp(sMax) < 0; s = s.Add(s, one) {
+				for s = sMin; s.Cmp(sMax) <= 0; s = s.Add(s, one) {
 					if oracle(x.mulEncrypt(s, e, pub.N, c0)) {
 						found = true
 						break
@@ -89,7 +89,7 @@ func (x challenge47) DecryptRsaPaddingOracleSimple(pub *rsa.PublicKey, ciphertex
 		// Step 3: Narrowing the set of solutions.
 		for _, m := range M {
 			rMin := new(big.Int).Mul(m.a, s)
-			rMin = rMin.Sub(rMin, threeB).Add(rMin, one).Div(rMin, pub.N)
+			rMin = ceil(rMin.Sub(rMin, threeB).Add(rMin, one), pub.N)
 
 			rMax := new(big.Int).Mul(m.b, s)
 			rMax = rMax.Sub(rMax, twoB).Div(rMax, pub.N)
