@@ -44,10 +44,8 @@ func (challenge47) union(M []interval, m interval) []interval {
 }
 
 func (x challenge47) DecryptRsaPaddingOracleSimple(pub *rsa.PublicKey, ciphertext []byte, oracle oracleFunc) []byte {
-	e, c := big.NewInt(int64(pub.E)), new(big.Int).SetBytes(ciphertext)
-	s, s0, c0, i := new(big.Int), new(big.Int), new(big.Int), 1
-
-	k := big.NewInt(int64(len(pub.N.Bytes())))
+	e, c0, s := big.NewInt(int64(pub.E)), new(big.Int).SetBytes(ciphertext), new(big.Int)
+	k := big.NewInt(int64(pub.N.BitLen() / 8))
 	one, two, three, eight := big.NewInt(1), big.NewInt(2), big.NewInt(3), big.NewInt(8)
 
 	B := new(big.Int).Sub(k, two)
@@ -56,22 +54,15 @@ func (x challenge47) DecryptRsaPaddingOracleSimple(pub *rsa.PublicKey, ciphertex
 	twoB, threeB := new(big.Int).Mul(two, B), new(big.Int).Mul(three, B)
 	M := []interval{interval{a: twoB, b: new(big.Int).Sub(threeB, one)}}
 
-	// Step 1: Blinding.
-	if oracle(c.Bytes()) {
-		c0.Set(c)
-	} else {
-		for s0 = randInt(pub.N); !oracle(x.mulEncrypt(s0, e, pub.N, c0)); s0 = randInt(pub.N) {
-		}
-	}
-
 	// Step 2: Searching for PKCS conforming messages.
-	for {
+	for i := 1; ; i++ {
 		if i == 1 { // Step 2a: Starting the search.
-			for s = new(big.Int).Div(pub.N, threeB); !oracle(x.mulEncrypt(s, e, pub.N, c0)); s = s.Add(s, one) {
+			for s = ceil(pub.N, threeB); !oracle(x.mulEncrypt(s, e, pub.N, c0)); s = s.Add(s, one) {
 			}
 		} else if len(M) > 1 { // Step 2.b: Searching with more than one interval left.
-			for s = new(big.Int).Set(s); !oracle(x.mulEncrypt(s, e, pub.N, c0)); s = s.Add(s, one) {
+			for s = s.Add(s, one); !oracle(x.mulEncrypt(s, e, pub.N, c0)); s = s.Add(s, one) {
 			}
+
 		} else { // Step 2.c: Searching with one interval left.
 			a, b, found := M[0].a, M[0].b, false
 
@@ -85,9 +76,9 @@ func (x challenge47) DecryptRsaPaddingOracleSimple(pub *rsa.PublicKey, ciphertex
 				sMax := new(big.Int).Mul(r, pub.N)
 				sMax = sMax.Add(threeB, sMax).Div(sMax, a)
 
-				for si := sMin; si.Cmp(sMax) < 0; si = si.Add(si, one) {
-					if oracle(x.mulEncrypt(si, e, pub.N, c0)) {
-						s, found = si, true
+				for s = sMin; s.Cmp(sMax) < 0; s = s.Add(s, one) {
+					if oracle(x.mulEncrypt(s, e, pub.N, c0)) {
+						found = true
 						break
 					}
 				}
@@ -109,7 +100,7 @@ func (x challenge47) DecryptRsaPaddingOracleSimple(pub *rsa.PublicKey, ciphertex
 				a = max(m.a, ceil(a.Add(twoB, a), s))
 
 				b := new(big.Int).Mul(r, pub.N)
-				b = min(m.b, floor(b.Add(threeB, b).Sub(threeB, one), s))
+				b = min(m.b, floor(b.Add(threeB, b).Sub(b, one), s))
 
 				mi := interval{a: a, b: b}
 				Mi = x.union(Mi, mi)
@@ -120,10 +111,7 @@ func (x challenge47) DecryptRsaPaddingOracleSimple(pub *rsa.PublicKey, ciphertex
 
 		// Step 4: Computing the solution.
 		if len(M) == 1 && M[0].a.Cmp(M[0].b) == 0 {
-			m := new(big.Int).ModInverse(s0, pub.N)
-			m = m.Mul(M[0].a, m).Mod(m, pub.N)
-
-			return m.Bytes()
+			return M[0].a.Bytes()
 		}
 	}
 }
