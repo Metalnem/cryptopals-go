@@ -7,8 +7,6 @@ import (
 )
 
 func TestDecryptRsaPaddingOracleSimple(t *testing.T) {
-	t.Skip("Skip this test until the solution is actually implemented")
-
 	c := challenge47{}
 
 	priv, _ := rsa.GenerateKey(rand.Reader, 1024)

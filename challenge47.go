@@ -4,6 +4,7 @@
 package cryptopals
 
 import (
+	"bytes"
 	"crypto/rsa"
 	"math/big"
 )
@@ -18,8 +19,8 @@ type interval struct {
 	b *big.Int
 }
 
-func (challenge47) mulEncrypt(m, e, n, c *big.Int) []byte {
-	x := new(big.Int).Exp(m, e, n)
+func (challenge47) mulEncrypt(s, e, n, c *big.Int) []byte {
+	x := new(big.Int).Exp(s, e, n)
 	return x.Mul(c, x).Mod(x, n).Bytes()
 }
 
@@ -110,7 +111,10 @@ func (x challenge47) DecryptRsaPaddingOracleSimple(pub *rsa.PublicKey, ciphertex
 
 		// Step 4: Computing the solution.
 		if len(M) == 1 && M[0].a.Cmp(M[0].b) == 0 {
-			return M[0].a.Bytes()
+			padded := M[0].a.Bytes()
+			index := bytes.IndexByte(padded, 0)
+
+			return padded[index+1:]
 		}
 	}
 }
