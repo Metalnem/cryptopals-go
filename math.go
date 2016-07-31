@@ -35,14 +35,8 @@ func min(x, y *big.Int) *big.Int {
 }
 
 func ceil(x, y *big.Int) *big.Int {
-	var z, r big.Int
-	z.DivMod(x, y, &r)
-
-	if r.Sign() == 0 {
-		return &z
-	}
-
-	return z.Add(&z, big.NewInt(1))
+	ceil := new(big.Int)
+	return ceil.Add(x, y).Sub(ceil, big.NewInt(1)).Div(ceil, y)
 }
 
 func floor(x, y *big.Int) *big.Int {
