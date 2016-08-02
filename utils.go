@@ -71,3 +71,21 @@ func hmacHash(f func() hash.Hash, key, message []byte) []byte {
 
 	return h.Sum(nil)
 }
+
+func xor(b1, b2 []byte) []byte {
+	l1 := len(b1)
+	l2 := len(b2)
+	l := l1
+
+	if l1 > l2 {
+		l = l2
+	}
+
+	b := make([]byte, l)
+
+	for i := 0; i < l; i++ {
+		b[i] = b1[i] ^ b2[i]
+	}
+
+	return b
+}
