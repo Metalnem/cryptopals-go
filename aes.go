@@ -40,6 +40,7 @@ func AesCbcDecrypt(ciphertext, key []byte) []byte {
 }
 
 // CbcMacSign calculates CBC-MAC for a given message.
+// IV and MAC are appended to the plaintext.
 func CbcMacSign(message, key []byte, iv []byte) []byte {
 	padded, _ := pkcs7.Pad(message, aes.BlockSize)
 	ciphertext := make([]byte, len(padded))
@@ -48,10 +49,19 @@ func CbcMacSign(message, key []byte, iv []byte) []byte {
 	mode := cipher.NewCBCEncrypter(block, iv)
 	mode.CryptBlocks(ciphertext[:], padded)
 
-	return ciphertext[len(ciphertext)-aes.BlockSize:]
+	size := len(message)
+	msg := make([]byte, size+2*aes.BlockSize)
+	mac := ciphertext[len(ciphertext)-aes.BlockSize:]
+
+	copy(msg[:], message)
+	copy(msg[size:], iv)
+	copy(msg[size+aes.BlockSize:], mac)
+
+	return msg
 }
 
 // CbcMacVerify verifies CBC-MAC for a given message.
+// It assumes that IV and mac are appended to the plaintext.
 func CbcMacVerify(msg, key []byte) bool {
 	size := len(msg) - 2*aes.BlockSize
 
@@ -61,7 +71,7 @@ func CbcMacVerify(msg, key []byte) bool {
 
 	message := msg[0:size]
 	iv := msg[size : size+aes.BlockSize]
-	mac := msg[size+aes.BlockSize : size+2*aes.BlockSize]
+	mac := msg[size+aes.BlockSize:]
 
 	return subtle.ConstantTimeCompare(CbcMacSign(message, key, iv), mac) == 1
 }
