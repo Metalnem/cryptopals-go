@@ -4,6 +4,7 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/rand"
+	"crypto/subtle"
 
 	"github.com/d1str0/pkcs7"
 )
@@ -36,4 +37,31 @@ func AesCbcDecrypt(ciphertext, key []byte) []byte {
 	unpadded, _ := pkcs7.Unpad(message)
 
 	return unpadded
+}
+
+// CbcMacSign calculates CBC-MAC for a given message.
+func CbcMacSign(message, key []byte, iv []byte) []byte {
+	padded, _ := pkcs7.Pad(message, aes.BlockSize)
+	ciphertext := make([]byte, len(padded))
+
+	block, _ := aes.NewCipher(key)
+	mode := cipher.NewCBCEncrypter(block, iv)
+	mode.CryptBlocks(ciphertext[:], padded)
+
+	return ciphertext[len(ciphertext)-aes.BlockSize:]
+}
+
+// CbcMacVerify verifies CBC-MAC for a given message.
+func CbcMacVerify(msg, key []byte) bool {
+	size := len(msg) - 2*aes.BlockSize
+
+	if size < 0 {
+		return false
+	}
+
+	message := msg[0:size]
+	iv := msg[size : size+aes.BlockSize]
+	mac := msg[size+aes.BlockSize : size+2*aes.BlockSize]
+
+	return subtle.ConstantTimeCompare(CbcMacSign(message, key, iv), mac) == 1
 }

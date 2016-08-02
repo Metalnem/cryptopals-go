@@ -1,4 +1,4 @@
-// Challenge 47 - Bleichenbacher's PKCS 1.5 Padding Oracle (Complete Case)
+// Challenge 48 - Bleichenbacher's PKCS 1.5 Padding Oracle (Complete Case)
 // http://cryptopals.com/sets/6/challenges/48
 
 package cryptopals
