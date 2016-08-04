@@ -95,15 +95,9 @@ func CbcMacSignFixedIv(message, key []byte) []byte {
 
 	mode := cipher.NewCBCEncrypter(block, iv)
 	mode.CryptBlocks(ciphertext[:], padded)
-
-	size := len(message)
-	msg := make([]byte, size+2*aes.BlockSize)
 	mac := ciphertext[len(ciphertext)-aes.BlockSize:]
 
-	copy(msg[:], message)
-	copy(msg[size+aes.BlockSize:], mac)
-
-	return msg
+	return append(message[:len(message):len(message)], mac...)
 }
 
 // CbcMacVerifyFixedIv verifies CBC-MAC for a given message.
