@@ -63,7 +63,7 @@ func CbcMacSign(message, key []byte, iv []byte) []byte {
 }
 
 // CbcMacVerify verifies CBC-MAC for a given message.
-// It assumes that IV and mac are appended to the plaintext.
+// It assumes that IV and MAC are appended to the plaintext.
 func CbcMacVerify(msg, key []byte) bool {
 	size := len(msg) - 2*aes.BlockSize
 
@@ -73,6 +73,45 @@ func CbcMacVerify(msg, key []byte) bool {
 
 	message := msg[0:size]
 	iv := msg[size : size+aes.BlockSize]
+	sig := CbcMacSign(message, key, iv)
 
-	return subtle.ConstantTimeCompare(CbcMacSign(message, key, iv), msg) == 1
+	return subtle.ConstantTimeCompare(sig, msg) == 1
+}
+
+// CbcMacSignFixedIv calculates CBC-MAC for a given message using zero IV.
+// MAC is appended to the plaintext.
+func CbcMacSignFixedIv(message, key []byte) []byte {
+	message = message[:len(message):len(message)]
+	padded, _ := pkcs7.Pad(message, aes.BlockSize)
+	ciphertext := make([]byte, len(padded))
+
+	block, _ := aes.NewCipher(key)
+	iv := make([]byte, aes.BlockSize)
+
+	mode := cipher.NewCBCEncrypter(block, iv)
+	mode.CryptBlocks(ciphertext[:], padded)
+
+	size := len(message)
+	msg := make([]byte, size+2*aes.BlockSize)
+	mac := ciphertext[len(ciphertext)-aes.BlockSize:]
+
+	copy(msg[:], message)
+	copy(msg[size+aes.BlockSize:], mac)
+
+	return msg
+}
+
+// CbcMacVerifyFixedIv verifies CBC-MAC for a given message.
+// It assumes that IV is zero and MAC is appended to the plaintext.
+func CbcMacVerifyFixedIv(msg, key []byte) bool {
+	size := len(msg) - aes.BlockSize
+
+	if size < 0 {
+		return false
+	}
+
+	message := msg[0:size]
+	sig := CbcMacSignFixedIv(message, key)
+
+	return subtle.ConstantTimeCompare(sig, msg) == 1
 }
