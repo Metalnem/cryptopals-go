@@ -9,11 +9,17 @@ import (
 	"github.com/d1str0/pkcs7"
 )
 
+func pkcs7Pad(message []byte) []byte {
+	message = message[:len(message):len(message)]
+	padded, _ := pkcs7.Pad(message, aes.BlockSize)
+
+	return padded
+}
+
 // AesCbcEncrypt encrypts the message using given key and random IV.
 // IV is prepended to the ciphertext.
 func AesCbcEncrypt(message, key []byte) []byte {
-	message = message[:len(message):len(message)]
-	padded, _ := pkcs7.Pad(message, aes.BlockSize)
+	padded := pkcs7Pad(message)
 	ciphertext := make([]byte, aes.BlockSize+len(padded))
 
 	iv := ciphertext[0:aes.BlockSize]
@@ -81,8 +87,7 @@ func CbcMacVerify(msg, key []byte) bool {
 // CbcMacSignFixedIv calculates CBC-MAC for a given message using zero IV.
 // MAC is appended to the plaintext.
 func CbcMacSignFixedIv(message, key []byte) []byte {
-	message = message[:len(message):len(message)]
-	padded, _ := pkcs7.Pad(message, aes.BlockSize)
+	padded := pkcs7Pad(message)
 	ciphertext := make([]byte, len(padded))
 
 	block, _ := aes.NewCipher(key)
