@@ -30,9 +30,15 @@ Go solutions to the Matasano Crypto Challenges (<http://cryptopals.com/>). Solut
 47. Bleichenbacher's PKCS 1.5 Padding Oracle (Simple Case) ([problem](http://cryptopals.com/sets/6/challenges/47), [solution](https://github.com/Metalnem/cryptopals-go/blob/master/challenge47.go), [test](https://github.com/Metalnem/cryptopals-go/blob/master/challenge47_test.go))
 48. Bleichenbacher's PKCS 1.5 Padding Oracle (Complete Case) ([problem](http://cryptopals.com/sets/6/challenges/48), [solution](https://github.com/Metalnem/cryptopals-go/blob/master/challenge48.go), [test](https://github.com/Metalnem/cryptopals-go/blob/master/challenge48_test.go))
 
+## [Set 7: Hashes](http://cryptopals.com/sets/7)
+
+49. CBC-MAC Message Forgery ([problem](http://cryptopals.com/sets/7/challenges/49), [solution](https://github.com/Metalnem/cryptopals-go/blob/master/challenge49.go), [test](https://github.com/Metalnem/cryptopals-go/blob/master/challenge49_test.go))
+50. Hashing with CBC-MAC ([problem](http://cryptopals.com/sets/7/challenges/50))
+
 ## Useful links
 
 1. [Bleichenbacher's RSA signature forgery based on implementation error](https://www.ietf.org/mail-archive/web/openpgp/current/msg00999.html) (challenge 42)
 2. [The Debian PGP disaster that almost was](https://rdist.root.org/2009/05/17/the-debian-pgp-disaster-that-almost-was/) (challenge 43)
 3. [DSA requirements for random k value](https://rdist.root.org/2010/11/19/dsa-requirements-for-random-k-value/) (challenge 44)
 4. [Chosen Ciphertext Attacks Against Protocols Based on the RSA Encryption Standard PKCS #1](http://archiv.infsec.ethz.ch/education/fs08/secsem/Bleichenbacher98.pdf) (challenges 47 and 48)
+5. [Why I hate CBC-MAC](http://blog.cryptographyengineering.com/2013/02/why-i-hate-cbc-mac.html) (challenge 49)
