@@ -53,7 +53,7 @@ func (challenge49) ForgeCbcMacMessage(client *cbcMacClient, target, attacker acc
 
 func (challenge49) CbcMacLengthExtension(client *cbcMacClient, target, other, attacker accountID, amount money) []byte {
 	realMsg := client.transferMultiple(target, other, amount)
-	realMessage := pkcs7Pad(realMsg[0:len(realMsg)])
+	realMessage := pkcs7Pad(realMsg[0 : len(realMsg)-aes.BlockSize])
 	realMac := realMsg[len(realMsg)-aes.BlockSize:]
 
 	fakeMessage := []byte(fmt.Sprintf(";%010d:%d", target, amount))
