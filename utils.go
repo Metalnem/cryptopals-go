@@ -73,18 +73,20 @@ func hmacHash(f func() hash.Hash, key, message []byte) []byte {
 }
 
 func xor(b1, b2 []byte) []byte {
-	l1 := len(b1)
-	l2 := len(b2)
-	l := l1
-
-	if l1 > l2 {
-		l = l2
+	if len(b1) < len(b2) {
+		temp := b1
+		b1 = b2
+		b2 = temp
 	}
 
-	b := make([]byte, l)
+	b := make([]byte, len(b1))
 
-	for i := 0; i < l; i++ {
+	for i := 0; i < len(b2); i++ {
 		b[i] = b1[i] ^ b2[i]
+	}
+
+	for i := len(b2); i < len(b1); i++ {
+		b[i] = b1[i]
 	}
 
 	return b
