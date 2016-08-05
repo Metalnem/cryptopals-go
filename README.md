@@ -33,7 +33,7 @@ Go solutions to the Matasano Crypto Challenges (<http://cryptopals.com/>). Solut
 ## [Set 7: Hashes](http://cryptopals.com/sets/7)
 
 49. CBC-MAC Message Forgery ([problem](http://cryptopals.com/sets/7/challenges/49), [solution](https://github.com/Metalnem/cryptopals-go/blob/master/challenge49.go), [test](https://github.com/Metalnem/cryptopals-go/blob/master/challenge49_test.go))
-50. Hashing with CBC-MAC ([problem](http://cryptopals.com/sets/7/challenges/50))
+50. Hashing with CBC-MAC ([problem](http://cryptopals.com/sets/7/challenges/50), [solution](https://github.com/Metalnem/cryptopals-go/blob/master/challenge50.go), [test](https://github.com/Metalnem/cryptopals-go/blob/master/challenge50_test.go))
 
 ## Useful links
 
