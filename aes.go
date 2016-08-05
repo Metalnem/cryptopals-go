@@ -46,6 +46,20 @@ func AesCbcDecrypt(ciphertext, key []byte) []byte {
 	return unpadded
 }
 
+// CbcMacHash calculates CBC-MAC hash for a given message using zero IV.
+func CbcMacHash(message, key []byte) []byte {
+	padded := pkcs7Pad(message)
+	ciphertext := make([]byte, len(padded))
+
+	block, _ := aes.NewCipher(key)
+	iv := make([]byte, aes.BlockSize)
+
+	mode := cipher.NewCBCEncrypter(block, iv)
+	mode.CryptBlocks(ciphertext[:], padded)
+
+	return ciphertext[len(ciphertext)-aes.BlockSize:]
+}
+
 // CbcMacSign calculates CBC-MAC for a given message.
 // IV and MAC are appended to the plaintext.
 func CbcMacSign(message, key []byte, iv []byte) []byte {
@@ -87,17 +101,7 @@ func CbcMacVerify(msg, key []byte) bool {
 // CbcMacSignFixedIv calculates CBC-MAC for a given message using zero IV.
 // MAC is appended to the plaintext.
 func CbcMacSignFixedIv(message, key []byte) []byte {
-	padded := pkcs7Pad(message)
-	ciphertext := make([]byte, len(padded))
-
-	block, _ := aes.NewCipher(key)
-	iv := make([]byte, aes.BlockSize)
-
-	mode := cipher.NewCBCEncrypter(block, iv)
-	mode.CryptBlocks(ciphertext[:], padded)
-	mac := ciphertext[len(ciphertext)-aes.BlockSize:]
-
-	return append(message[:len(message):len(message)], mac...)
+	return append(message[:len(message):len(message)], CbcMacHash(message, key)...)
 }
 
 // CbcMacVerifyFixedIv verifies CBC-MAC for a given message.
