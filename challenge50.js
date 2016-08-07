@@ -10,6 +10,10 @@ function stringToArrayBuffer(s) {
 	return buf;
 }
 
+function arrayBufferToString(buf) {
+	return String.fromCharCode.apply(null, new Uint8Array(buf));
+}
+
 function arrayBufferToHex(buf) {
 	let s = '';
 	const view = new Uint8Array(buf);
@@ -41,11 +45,20 @@ function cbcMacHash(data, key) {
 			};
 
 			return subtle.encrypt(options, key, data);
-		}).then(ciphertext => arrayBufferToHex(ciphertext.slice(-blockSize)));
+		}).then(ciphertext => ciphertext.slice(-blockSize));
 }
 
-let data = stringToArrayBuffer('alert(\'MZA who was that?\');\n');
-let key = stringToArrayBuffer('YELLOW SUBMARINE');
-let expectedHash = '296b8d7cb78a243dda4d0a61d33bbdd1';
+fetch('https://raw.githubusercontent.com/Metalnem/cryptopals-go/master/challenge50.dat')
+	.then(response => response.arrayBuffer())
+	.then(buf => {
+		let key = stringToArrayBuffer('YELLOW SUBMARINE');
+		let expectedHash = '296b8d7cb78a243dda4d0a61d33bbdd1';
 
-cbcMacHash(data, key).then(actualHash => alert(actualHash === expectedHash));
+		return cbcMacHash(buf, key).then(actualHash => {
+			if (arrayBufferToHex(actualHash) === expectedHash) {
+				var script = document.createElement('script');
+				script.innerHTML = arrayBufferToString(buf);
+				document.head.appendChild(script);
+			}
+		});
+	});
