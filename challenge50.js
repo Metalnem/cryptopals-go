@@ -1,7 +1,7 @@
 function stringToArrayBuffer(s) {
-	let len = s.length;
-	let buf = new ArrayBuffer(len);
-	let view = new Uint8Array(buf);
+	const len = s.length;
+	const buf = new ArrayBuffer(len);
+	const view = new Uint8Array(buf);
 
 	for (let i = 0; i < len; ++i) {
 		view[i] = s.charCodeAt(i);
@@ -51,12 +51,12 @@ function cbcMacHash(data, key) {
 fetch('https://raw.githubusercontent.com/Metalnem/cryptopals-go/master/challenge50.dat')
 	.then(response => response.arrayBuffer())
 	.then(buf => {
-		let key = stringToArrayBuffer('YELLOW SUBMARINE');
-		let expectedHash = '296b8d7cb78a243dda4d0a61d33bbdd1';
+		const key = stringToArrayBuffer('YELLOW SUBMARINE');
+		const expectedHash = '296b8d7cb78a243dda4d0a61d33bbdd1';
 
 		return cbcMacHash(buf, key).then(actualHash => {
 			if (arrayBufferToHex(actualHash) === expectedHash) {
-				var script = document.createElement('script');
+				const script = document.createElement('script');
 				script.innerHTML = arrayBufferToString(buf);
 				document.head.appendChild(script);
 			}
