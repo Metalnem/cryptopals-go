@@ -42,3 +42,4 @@ Go solutions to the Matasano Crypto Challenges (<http://cryptopals.com/>). Solut
 3. [DSA requirements for random k value](https://rdist.root.org/2010/11/19/dsa-requirements-for-random-k-value/) (challenge 44)
 4. [Chosen Ciphertext Attacks Against Protocols Based on the RSA Encryption Standard PKCS #1](http://archiv.infsec.ethz.ch/education/fs08/secsem/Bleichenbacher98.pdf) (challenges 47 and 48)
 5. [Why I hate CBC-MAC](http://blog.cryptographyengineering.com/2013/02/why-i-hate-cbc-mac.html) (challenge 49)
+6. [The CRIME attack](https://docs.google.com/presentation/d/11eBmGiHbYcHR9gL5nDyZChu_-lCa2GizeuOfaLU2HOU) (challenge 51)
