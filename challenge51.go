@@ -5,6 +5,10 @@ package cryptopals
 
 import (
 	"bytes"
+	"compress/flate"
+	"crypto/aes"
+	"crypto/cipher"
+	"io"
 	"text/template"
 )
 
@@ -18,8 +22,20 @@ Content-Length: {{ len . }}
 {{ . }}`))
 
 func (challenge51) CompressionOracle(data string) int {
-	b := new(bytes.Buffer)
-	t.Execute(b, data)
+	req := new(bytes.Buffer)
+	t.Execute(req, data)
 
-	return len(b.String())
+	b := new(bytes.Buffer)
+	w, _ := flate.NewWriter(b, flate.BestCompression)
+
+	io.Copy(w, req)
+	w.Close()
+
+	block, _ := aes.NewCipher(randBytes(aes.BlockSize))
+	ctr := cipher.NewCTR(block, randBytes(aes.BlockSize))
+
+	ciphertext := make([]byte, len(b.Bytes()))
+	ctr.XORKeyStream(ciphertext, ciphertext)
+
+	return len(ciphertext)
 }
