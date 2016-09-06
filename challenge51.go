@@ -34,7 +34,8 @@ func (challenge51) CompressionOracle(data string) int {
 	block, _ := aes.NewCipher(randBytes(aes.BlockSize))
 	ctr := cipher.NewCTR(block, randBytes(aes.BlockSize))
 
-	ciphertext := make([]byte, len(b.Bytes()))
+	var ciphertext []byte
+	ciphertext = append(ciphertext, b.Bytes()...)
 	ctr.XORKeyStream(ciphertext, ciphertext)
 
 	return len(ciphertext)
