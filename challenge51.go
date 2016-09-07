@@ -6,8 +6,6 @@ package cryptopals
 import (
 	"bytes"
 	"compress/flate"
-	"crypto/aes"
-	"crypto/cipher"
 	"io"
 	"math"
 	"text/template"
@@ -16,8 +14,11 @@ import (
 type challenge51 struct {
 }
 
+type encryptor func([]byte) []byte
+
 type compressionOracle struct {
 	cookie string
+	cipher encryptor
 }
 
 var t = template.Must(template.New("request").Parse(`POST / HTTP/1.1
@@ -43,13 +44,7 @@ func (oracle compressionOracle) process(data string) int {
 	io.Copy(w, req)
 	w.Close()
 
-	block, _ := aes.NewCipher(randBytes(aes.BlockSize))
-	ctr := cipher.NewCTR(block, randBytes(aes.BlockSize))
-
-	var ciphertext []byte
-	ciphertext = append(ciphertext, b.Bytes()...)
-	ctr.XORKeyStream(ciphertext, ciphertext)
-
+	ciphertext := oracle.cipher(b.Bytes())
 	return len(ciphertext)
 }
 
