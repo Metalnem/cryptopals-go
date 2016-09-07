@@ -8,7 +8,6 @@ import (
 	"compress/flate"
 	"crypto/aes"
 	"crypto/cipher"
-	"fmt"
 	"io"
 	"math"
 	"text/template"
@@ -18,7 +17,7 @@ type challenge51 struct {
 }
 
 const (
-	alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+	alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/="
 	cookie   = "sessionid=TmV2ZXIgcmV2ZWFsIHRoZSBXdS1UYW5nIFNlY3JldCE="
 )
 
@@ -52,12 +51,10 @@ func (challenge51) compressionOracle(data string) int {
 	ciphertext = append(ciphertext, b.Bytes()...)
 	ctr.XORKeyStream(ciphertext, ciphertext)
 
-	fmt.Println(req.String())
-
 	return len(ciphertext)
 }
 
-func (x challenge51) DecryptUsingCompressionOracle() (string, error) {
+func (x challenge51) DecryptUsingCompressionOracle() string {
 	body := "sessionid="
 
 	for len(body) < len(cookie) {
@@ -77,5 +74,5 @@ func (x challenge51) DecryptUsingCompressionOracle() (string, error) {
 		body += string(next)
 	}
 
-	return body, nil
+	return body
 }
