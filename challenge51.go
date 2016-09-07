@@ -15,10 +15,12 @@ type challenge51 struct {
 }
 
 type encryptor func([]byte) []byte
+type decryptor func(compressionOracle) string
 
 type compressionOracle struct {
-	cookie string
-	cipher encryptor
+	cookie  string
+	prefix  string
+	encrypt encryptor
 }
 
 var t = template.Must(template.New("request").Parse(`POST / HTTP/1.1
@@ -44,7 +46,7 @@ func (oracle compressionOracle) process(data string) int {
 	io.Copy(w, req)
 	w.Close()
 
-	ciphertext := oracle.cipher(b.Bytes())
+	ciphertext := oracle.encrypt(b.Bytes())
 	return len(ciphertext)
 }
 
@@ -52,8 +54,32 @@ func (oracle compressionOracle) cookieLength() int {
 	return len(oracle.cookie)
 }
 
-func (x challenge51) DecryptAesCtrCompressed(prefix string, oracle compressionOracle) string {
-	body := prefix
+func (x challenge51) DecryptAesCtrCompressed(oracle compressionOracle) string {
+	body := oracle.prefix
+	alphabet := "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/="
+
+	for len(body) < oracle.cookieLength() {
+		best := int(math.MaxInt32)
+		var next rune
+
+		for _, c := range alphabet {
+			guess := body + string(c)
+			l := oracle.process(guess)
+
+			if l < best {
+				best = l
+				next = c
+			}
+		}
+
+		body += string(next)
+	}
+
+	return body
+}
+
+func (x challenge51) DecryptAesCbcCompressed(oracle compressionOracle) string {
+	body := oracle.prefix
 	alphabet := "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/="
 
 	for len(body) < oracle.cookieLength() {

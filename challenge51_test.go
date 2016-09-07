@@ -7,11 +7,14 @@ import (
 	"testing"
 )
 
-func TestDecryptAesCtrCompressed(t *testing.T) {
+func TestDecryptCompressed(t *testing.T) {
 	c := challenge51{}
-	prefix := "sessionid="
 
-	cipher := func(data []byte) []byte {
+	cookie := "sessionid=TmV2ZXIgcmV2ZWFsIHRoZSBXdS1UYW5nIFNlY3JldCE="
+	prefix := "sessionid="
+	secret := "Never reveal the Wu-Tang Secret!"
+
+	aesCtr := func(data []byte) []byte {
 		block, _ := aes.NewCipher(randBytes(aes.BlockSize))
 		ctr := cipher.NewCTR(block, randBytes(aes.BlockSize))
 
@@ -22,18 +25,32 @@ func TestDecryptAesCtrCompressed(t *testing.T) {
 		return ciphertext
 	}
 
-	oracle := compressionOracle{
-		cookie: "sessionid=TmV2ZXIgcmV2ZWFsIHRoZSBXdS1UYW5nIFNlY3JldCE=",
-		cipher: cipher,
+	aesCbc := func(data []byte) []byte {
+		key := randBytes(aes.BlockSize)
+		return AesCbcEncrypt(data, key)
 	}
 
-	expected := "Never reveal the Wu-Tang Secret!"
-	plaintext := c.DecryptAesCtrCompressed(prefix, oracle)
-	cookie := string(plaintext[len(prefix):])
-	bytes, _ := base64.StdEncoding.DecodeString(cookie)
-	actual := string(bytes)
+	tests := []struct {
+		oracle  compressionOracle
+		decrypt decryptor
+	}{
+		{oracle: compressionOracle{cookie: cookie, prefix: prefix, encrypt: aesCtr}, decrypt: c.DecryptAesCtrCompressed},
+		{oracle: compressionOracle{cookie: cookie, prefix: prefix, encrypt: aesCbc}, decrypt: c.DecryptAesCbcCompressed},
+	}
 
-	if actual != expected {
-		t.Fatalf("Expected %v, was %v", expected, actual)
+	for _, test := range tests[:1] {
+		plaintext := test.decrypt(test.oracle)
+		cookie := string(plaintext[len(test.oracle.prefix):])
+		bytes, err := base64.StdEncoding.DecodeString(cookie)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		actual := string(bytes)
+
+		if actual != secret {
+			t.Fatalf("Expected %v, was %v", secret, actual)
+		}
 	}
 }
