@@ -38,7 +38,7 @@ func TestDecryptCompressed(t *testing.T) {
 		{oracle: compressionOracle{cookie: cookie, prefix: prefix, encrypt: aesCbc}, decrypt: c.DecryptAesCbcCompressed},
 	}
 
-	for _, test := range tests[:1] {
+	for _, test := range tests {
 		plaintext := test.decrypt(test.oracle)
 		cookie := string(plaintext[len(test.oracle.prefix):])
 		bytes, err := base64.StdEncoding.DecodeString(cookie)
