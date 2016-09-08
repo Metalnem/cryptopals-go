@@ -56,21 +56,6 @@ func (oracle compressionOracle) cookieLength() int {
 	return len(oracle.cookie)
 }
 
-func (x challenge51) getRealLength(oracle compressionOracle, data string) int {
-	control := []byte{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
-	real := oracle.process(data)
-	guess := data
-
-	for i := 0; ; i++ {
-		guess += string(control[i%len(control)])
-		l := oracle.process(guess)
-
-		if real < l {
-			return real - i - 1
-		}
-	}
-}
-
 func (x challenge51) DecryptAesCtrCompressed(oracle compressionOracle) string {
 	body := oracle.prefix
 
@@ -103,7 +88,16 @@ func (x challenge51) DecryptAesCbcCompressed(oracle compressionOracle) string {
 
 		for _, c := range alphabet {
 			guess := body + string(c)
-			l := x.getRealLength(oracle, guess)
+			l := oracle.process(guess)
+
+			for i := 0; ; i++ {
+				guess += string(i % 10)
+
+				if l < oracle.process(guess) {
+					l = l - i - 1
+					break
+				}
+			}
 
 			if l < best {
 				best = l
