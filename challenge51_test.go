@@ -10,9 +10,9 @@ import (
 func TestDecryptCompressed(t *testing.T) {
 	c := challenge51{}
 
-	cookie := "sessionid=TmV2ZXIgcmV2ZWFsIHRoZSBXdS1UYW5nIFNlY3JldCE="
 	prefix := "sessionid="
 	secret := "Never reveal the Wu-Tang Secret!"
+	cookie := prefix + base64.StdEncoding.EncodeToString([]byte(secret))
 
 	aesCtr := func(data []byte) []byte {
 		block, _ := aes.NewCipher(randBytes(aes.BlockSize))
