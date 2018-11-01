@@ -36,6 +36,17 @@ Go solutions to the Matasano Crypto Challenges (<http://cryptopals.com/>). Solut
 50. Hashing with CBC-MAC ([problem](http://cryptopals.com/sets/7/challenges/50), [solution](https://github.com/Metalnem/cryptopals-go/blob/master/challenge50.go), [test](https://github.com/Metalnem/cryptopals-go/blob/master/challenge50_test.go))
 51. Compression Ratio Side-Channel Attacks ([problem](http://cryptopals.com/sets/7/challenges/51), [solution](https://github.com/Metalnem/cryptopals-go/blob/master/challenge51.go), [test](https://github.com/Metalnem/cryptopals-go/blob/master/challenge51_test.go))
 
+## [Set 8: Abstract Algebra](http://cryptopals.com/sets/8)
+
+57. Diffie-Hellman Revisited: Small Subgroup Confinement ([problem](https://github.com/Metalnem/cryptopals-go/blob/master/challenge57.txt))
+58. Pollard's Method for Catching Kangaroos ([problem](https://github.com/Metalnem/cryptopals-go/blob/master/challenge58.txt))
+59. Elliptic Curve Diffie-Hellman and Invalid-Curve Attacks ([problem](https://github.com/Metalnem/cryptopals-go/blob/master/challenge59.txt))
+60. Single-Coordinate Ladders and Insecure Twists ([problem](https://github.com/Metalnem/cryptopals-go/blob/master/challenge60.txt))
+61. Duplicate-Signature Key Selection in ECDSA (and RSA) ([problem](https://github.com/Metalnem/cryptopals-go/blob/master/challenge61.txt))
+62. Key-Recovery Attacks on ECDSA with Biased Nonces ([problem](https://github.com/Metalnem/cryptopals-go/blob/master/challenge62.txt))
+63. Key-Recovery Attacks on GCM with Repeated Nonces ([problem](https://github.com/Metalnem/cryptopals-go/blob/master/challenge63.txt))
+64. Key-Recovery Attacks on GCM with a Truncated MAC ([problem](https://github.com/Metalnem/cryptopals-go/blob/master/challenge64.txt))
+
 ## Useful links
 
 1. [Bleichenbacher's RSA signature forgery based on implementation error](https://www.ietf.org/mail-archive/web/openpgp/current/msg00999.html) (challenge 42)
