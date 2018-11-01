@@ -1,6 +1,14 @@
 package cryptopals
 
-import "math/big"
+import (
+	"errors"
+	"math/big"
+)
+
+type equation struct {
+	A *big.Int
+	M *big.Int
+}
 
 func cbrt(n *big.Int) *big.Int {
 	two := big.NewInt(2)
@@ -41,4 +49,52 @@ func ceil(x, y *big.Int) *big.Int {
 
 func floor(x, y *big.Int) *big.Int {
 	return new(big.Int).Div(x, y)
+}
+
+func crt(eqs []equation) (equation, error) {
+	if len(eqs) == 0 {
+		return equation{}, errors.New("system of equations is empty")
+	}
+
+	var a, m, x, gcd, inv, one big.Int
+
+	m.SetInt64(1)
+	one.SetInt64(1)
+
+	for _, eq := range eqs {
+		gcd.GCD(nil, nil, &m, eq.M)
+
+		if gcd.Cmp(&one) > 0 {
+			return equation{}, errors.New("remainders are not pairwise relatively prime")
+		}
+
+		x.Sub(eq.A, &a)
+		inv.ModInverse(&m, eq.M)
+		x.Mul(&x, &inv)
+
+		x.Mul(&x, &m)
+		a.Add(&a, &x)
+
+		m.Mul(&m, eq.M)
+		a.Mod(&a, &m)
+	}
+
+	return equation{A: &a, M: &m}, nil
+}
+
+func primes(n int) []int {
+	s := make([]bool, n)
+	var p []int
+
+	for i := 2; i < n; i++ {
+		if !s[i] {
+			p = append(p, i)
+
+			for j := i * i; j < len(s); j += i {
+				s[j] = true
+			}
+		}
+	}
+
+	return p
 }
