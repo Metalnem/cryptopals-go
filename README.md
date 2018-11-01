@@ -46,6 +46,8 @@ Go solutions to the Matasano Crypto Challenges (<http://cryptopals.com/>). Solut
 62. Key-Recovery Attacks on ECDSA with Biased Nonces ([problem](https://github.com/Metalnem/cryptopals-go/blob/master/challenge62.txt))
 63. Key-Recovery Attacks on GCM with Repeated Nonces ([problem](https://github.com/Metalnem/cryptopals-go/blob/master/challenge63.txt))
 64. Key-Recovery Attacks on GCM with a Truncated MAC ([problem](https://github.com/Metalnem/cryptopals-go/blob/master/challenge64.txt))
+65. Truncated-MAC GCM Revisited: Improving the Key-Recovery Attack via Ciphertext Length Extension ([problem](https://github.com/Metalnem/cryptopals-go/blob/master/challenge65.txt))
+66. Exploiting Implementation Errors in Diffie-Hellman ([problem](https://github.com/Metalnem/cryptopals-go/blob/master/challenge66.txt))
 
 ## Useful links
 
